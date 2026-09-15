@@ -1,0 +1,8 @@
+- Code should read without prose. Names carry intent; functions are small and sit at a single level of abstraction; extract a well-named helper rather than annotate a block.
+- **Comments are off by default.** Add one only for a non-obvious *why* the code cannot express: a workaround and the issue it addresses, a security or compliance constraint, a public API contract. Never narrate what the code does, never leave process notes, never restate the commit message.
+- Do not match an over-commented file's comment density. That instruction governs naming and idiom, not comment volume.
+- Ticket and issue IDs live in commits and PRs, not in source or test names. Spec IDs are the exception: they are the traceability mechanism and belong in test titles.
+- No new dependencies, frameworks or services without asking first, with a one-line case for each.
+- Never delete or weaken a test without saying so and why.
+- Call out architectural changes explicitly: new boundaries, new external calls, schema changes, auth changes.
+- Match the surrounding code's conventions for formatting, naming and idiom. Do not reformat what you did not change.

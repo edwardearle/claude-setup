@@ -1,0 +1,21 @@
+{
+  "name": "ede",
+  "owner": {
+    "name": "Ed Earle"
+  },
+  "metadata": {
+    "description": "Personal Claude Code setup: spec-first TDD workflow, model orchestration, guard hooks.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "flow",
+      "source": "./plugin",
+      "description": "Spec-first, test-driven delivery workflow: /flow:spec, /flow:plan, /flow:implement, /flow:review, /flow:spec-audit, /flow:migrate.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Ed Earle"
+      }
+    }
+  ]
+}

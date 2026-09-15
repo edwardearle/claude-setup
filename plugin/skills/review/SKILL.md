@@ -1,0 +1,29 @@
+---
+name: review
+description: "Independent review of the current branch's changes against their specs by a model that did not write the code, with a second opinion from Codex when it is installed. Use before a PR, at the end of /flow:implement, or whenever the user asks for a review or second opinion. Invoke manually: /flow:review [base-branch]"
+argument-hint: "[base branch, default main]"
+---
+
+# Independent review
+
+Base: $ARGUMENTS (default `main`)
+
+## Steps
+
+1. **Scope the change.** `git diff <base>...HEAD --stat`, with the full diff saved to the scratchpad. Read `plans/*.md` for the specs in play; otherwise take spec IDs from commit bodies and test titles in the diff.
+2. **Pick the reviewer.** It must be a different model from the one that wrote the code. If this session is Fable, use `opus`; if Opus, use `fable`; if Sonnet, use `opus`. Launch the `flow:reviewer` agent with that `model`, giving it: the base ref, the spec file paths, the plan path, and the test command. It produces the diff itself.
+3. **Second opinion.** If `codex` is on PATH, in the same message launch a thin `sonnet` agent that writes a self-contained brief (spec text, diff path, what to look for), runs `codex exec -s read-only`, and returns findings in the same shape. If not, skip without comment.
+4. **Verify before reporting.** For each finding, open the code and confirm it. Drop anything you cannot reproduce or that the reviewer misread. Reviewers get line numbers wrong and invent APIs; you are the filter.
+5. **Report**, most severe first:
+   - **Blocker**: incorrect behaviour, a spec scenario with no test, a test that passes for the wrong reason, a security issue.
+   - **Should fix**: missing edge case, misleading name, duplicated logic, a test coupled to implementation.
+   - **Nit**: style. Keep these to three.
+   Then **spec drift**: behaviour in the diff no spec describes, and spec scenarios the diff should have covered but did not.
+   Each finding: `file:line`, one sentence, the failing input or state.
+6. Offer to fix blockers. Do not fix anything without being asked.
+
+## Rules
+
+- Never review your own diff alone. If no other model is available, say so and give the user the brief to run elsewhere.
+- Findings from two reviewers that disagree are reported as a disagreement; do not silently pick one.
+- Do not restate the diff. The user has it.

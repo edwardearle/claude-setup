@@ -1,0 +1,11 @@
+- Conventional Commits: `type(scope): subject`. `scope` is a code area (`auth`, `api`, `ui`), not a ticket. The body names the specs: `Implements auth/sign-in`.
+- Types: `feat`, `fix`, `test`, `reg` (regression tests capturing existing behaviour), `refactor`, `docs`, `chore`, `build`, `ci`, `style`.
+- Commit only when asked, or at a plan phase gate the user has just approved. Never commit as a side effect of another request.
+- Never push, force-push, rewrite shared history, or open a PR without being asked.
+- Do not commit on `main` or `master` unless the user explicitly says to for this commit. Suggest a branch: `<type>/<slug>`.
+- Small commits: a guide is under 10 files and around 200 lines. If a change is bigger, it is probably two commits.
+- `git status --short` first, then stage paths by name. Never `git add -A` or `git add .`.
+- Lint and the full test suite are green before any commit. If they are not, say so and stop.
+- Never commit secrets. Before the first commit in a repo, check `.gitignore` covers `.env*`, key files and local settings.
+- Co-author trailers: use whatever the harness supplies. Do not add or alter them.
+- `reg` commits (backfilling tests for existing behaviour) ship separately from the change they protect.

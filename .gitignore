@@ -1,0 +1,5 @@
+# Local-only
+*.local.json
+.DS_Store
+Thumbs.db
+bash.exe.stackdump
