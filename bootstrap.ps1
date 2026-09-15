@@ -40,7 +40,7 @@ if (-not (Test-Path $ClaudeDir)) {
 }
 
 # 1. Global CLAUDE.md import
-$globalMd = (Join-Path $RepoRoot 'global\CLAUDE.md') -replace '\', '/'
+$globalMd = (Join-Path $RepoRoot 'globalCLAUDE.md').Replace([char]92, '/')
 $importLine = "@$globalMd"
 $userMd = Join-Path $ClaudeDir 'CLAUDE.md'
 
