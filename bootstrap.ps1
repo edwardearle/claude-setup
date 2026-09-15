@@ -40,7 +40,7 @@ if (-not (Test-Path $ClaudeDir)) {
 }
 
 # 1. Global CLAUDE.md import
-$globalMd = (Join-Path $RepoRoot 'globalCLAUDE.md').Replace([char]92, '/')
+$globalMd = (Join-Path (Join-Path $RepoRoot 'global') 'CLAUDE.md').Replace([char]92, '/')
 $importLine = "@$globalMd"
 $userMd = Join-Path $ClaudeDir 'CLAUDE.md'
 
@@ -60,7 +60,7 @@ else {
 }
 
 # 2. Merge settings
-$srcPath = Join-Path $RepoRoot 'global\settings.json'
+$srcPath = Join-Path (Join-Path $RepoRoot 'global') 'settings.json'
 $dstPath = Join-Path $ClaudeDir 'settings.json'
 $src = Read-Text $srcPath | ConvertFrom-Json
 if (Test-Path $dstPath) { $dst = Read-Text $dstPath | ConvertFrom-Json } else { $dst = New-Object PSObject }
