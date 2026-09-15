@@ -124,7 +124,7 @@ if (-not $SkipPlugin) {
         $installed = (& claude plugin list | Out-String)
         if ($installed -match "(?im)\b$PluginName\b") {
             Write-Step "Plugin '$PluginName' installed; updating"
-            & claude plugin update $PluginName
+            & claude plugin update "$PluginName@$MarketplaceName"
         }
         else {
             Write-Step "Installing plugin $PluginName@$MarketplaceName"

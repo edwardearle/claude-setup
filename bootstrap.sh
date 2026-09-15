@@ -66,7 +66,7 @@ if [ "$SKIP_PLUGIN" -eq 0 ]; then
     fi
     if claude plugin list 2>/dev/null | grep -qw "$PLUGIN_NAME"; then
       step "Plugin '$PLUGIN_NAME' installed; updating"
-      claude plugin update "$PLUGIN_NAME" || true
+      claude plugin update "$PLUGIN_NAME@$MARKETPLACE_NAME" || true
     else
       step "Installing plugin $PLUGIN_NAME@$MARKETPLACE_NAME"
       claude plugin install "$PLUGIN_NAME@$MARKETPLACE_NAME" || true
