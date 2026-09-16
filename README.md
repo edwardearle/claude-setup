@@ -53,7 +53,24 @@ Design choices worth knowing:
 
 ## Model orchestration
 
-`global/rules/orchestration.md` holds a cost/intelligence/taste table for Haiku, Sonnet, Opus, Fable and GPT-5.5 via Codex, with rules for which to hand what. The numbers are starting estimates: edit them as you learn what each model is worth to you. Codex rows apply only when `codex` is on PATH; `bootstrap` tells you whether it is.
+`global/rules/orchestration.md` holds a cost, intelligence and taste table for the Claude models and for Codex, with rules for which work goes where, how much reasoning effort to spend, and how to drive Codex. The numbers are estimates: edit them as you learn what each model is worth to you.
+
+### Effort
+
+Levels are `low`, `medium`, `high` (the default), `xhigh` and `max`. `settings.json` accepts the first four; `max` is session-only, set with `/effort max`. Individual skills and agents pin their own level with `effort:` in frontmatter, which is why `flow:spec-checker` runs cheap and `flow:reviewer` does not drop below `high` even in a low-effort session.
+
+### Codex setup
+
+The Codex rows apply only when `codex` is on PATH, and `bootstrap` reports whether it is. To enable them, billed against an OpenAI API key rather than a ChatGPT plan:
+
+```bash
+npm install -g @openai/codex
+printenv OPENAI_API_KEY | codex login --with-api-key
+```
+
+Set `OPENAI_API_KEY` in the shell profile so Claude Code's Bash tool inherits it: a user environment variable on Windows, `.zprofile` on macOS. Never put the key in this repository or on a command line. Defaults live in `~/.codex/config.toml`.
+
+Billing is metered per token with no subscription ceiling, so the rules require every run to be bounded and wrapped in a subagent. Read-only runs are on the permission allowlist; anything that writes to the working tree asks first.
 
 ## Layout
 
