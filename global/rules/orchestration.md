@@ -1,6 +1,6 @@
 ### Picking models for subagents and delegated work
 
-Rankings are 1-10, higher is better. **Cost** reflects what I actually pay under my plans, not list price. **Intelligence** is how hard a problem the model can be handed unsupervised. **Taste** covers UI/UX, code quality, API design and copy. These are starting estimates; tune them as experience accumulates.
+Rankings are 1-10, higher is better, with the exception of cost where lower is better. **Cost** reflects what I actually pay under my plans, not list price. **Intelligence** is how hard a problem the model can be handed unsupervised. **Taste** covers UI/UX, code quality, API design and copy. These are starting estimates; tune them as experience accumulates.
 
 | Model | Cost | Intelligence | Taste | How to reach it |
 |-------|------|--------------|-------|-----------------|
