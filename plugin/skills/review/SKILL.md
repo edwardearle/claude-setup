@@ -13,6 +13,7 @@ Base: $ARGUMENTS (default `main`)
 1. **Scope the change.** `git diff <base>...HEAD --stat`, with the full diff saved to the scratchpad. Read `plans/*.md` for the specs in play; otherwise take spec IDs from commit bodies and test titles in the diff.
 2. **Pick the reviewer.** It must be a different model from the one that wrote the code. If this session is Fable, use `opus`; if Opus, use `fable`; if Sonnet, use `opus`. Launch the `flow:reviewer` agent with that `model`, giving it: the base ref, the spec file paths, the plan path, and the test command. It produces the diff itself.
 3. **Second opinion.** If `codex` is on PATH, in the same message launch a thin `sonnet` agent that writes a self-contained brief (spec text, diff path, what to look for), runs `codex exec -s read-only`, and returns findings in the same shape. If not, skip without comment.
+   If Codex stops on a usage limit or exhausted credits, retry once with `codex exec --profile api -s read-only`, which bills the OpenAI API rather than the plan, and say so in the report. If the retry fails too, report the second opinion as unavailable; never drop it silently.
 4. **Verify before reporting.** For each finding, open the code and confirm it. Drop anything you cannot reproduce or that the reviewer misread. Reviewers get line numbers wrong and invent APIs; you are the filter.
 5. **Report**, most severe first:
    - **Blocker**: incorrect behaviour, a spec scenario with no test, a test that passes for the wrong reason, a security issue.

@@ -33,6 +33,7 @@
       "Bash(pytest:*)",
       "Bash(python -m pytest:*)",
       "Bash(codex exec -s read-only:*)",
+      "Bash(codex exec --profile api -s read-only:*)",
       "Bash(rg:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",

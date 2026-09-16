@@ -146,6 +146,48 @@ if (-not $SkipPlugin) {
 # 4. Codex
 if (Get-Command codex -ErrorAction SilentlyContinue) {
     Write-Step "codex CLI found; Codex routes in the orchestration rules are active"
+
+    $CodexDir = Join-Path $HOME '.codex'
+    if (-not (Test-Path $CodexDir)) { New-Item -ItemType Directory -Path $CodexDir | Out-Null }
+
+    $providerBlock = @(
+        '# Usage-based billing fallback, used by: codex exec --profile api',
+        '# The key is read from OPENAI_API_KEY at run time, never stored here.',
+        '[model_providers.openai-api]',
+        'name = "OpenAI API (usage-based)"',
+        'base_url = "https://api.openai.com/v1"',
+        'env_key = "OPENAI_API_KEY"',
+        'wire_api = "responses"'
+    ) -join "`r`n"
+
+    $codexConfig = Join-Path $CodexDir 'config.toml'
+    if (-not (Test-Path $codexConfig)) {
+        Write-Utf8 $codexConfig ($providerBlock + "`r`n")
+        Write-Step "Created $codexConfig"
+    }
+    elseif (-not (Read-Text $codexConfig).Contains('[model_providers.openai-api]')) {
+        Write-Utf8 $codexConfig ((Read-Text $codexConfig).TrimEnd() + "`r`n`r`n" + $providerBlock + "`r`n")
+        Write-Step "Added the openai-api provider to $codexConfig"
+    }
+    else {
+        Write-Step "Codex openai-api provider already present"
+    }
+
+    $apiProfile = Join-Path $CodexDir 'api.config.toml'
+    if (-not (Test-Path $apiProfile)) {
+        Write-Utf8 $apiProfile ('model_provider = "openai-api"' + "`r`n")
+        Write-Step "Created Codex profile 'api' at $apiProfile"
+    }
+    else {
+        Write-Step "Codex profile 'api' already present"
+    }
+
+    if ($env:OPENAI_API_KEY) {
+        Write-Step "OPENAI_API_KEY is set; the 'api' fallback profile is ready"
+    }
+    else {
+        Write-Warning "OPENAI_API_KEY is not set; 'codex exec --profile api' will fail until it is."
+    }
 }
 else {
     Write-Step "codex CLI not on PATH; orchestration rules fall back to Claude-only routes"

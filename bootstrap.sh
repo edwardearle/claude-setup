@@ -91,6 +91,48 @@ fi
 # 4. Codex
 if command -v codex >/dev/null 2>&1; then
   step "codex CLI found; Codex routes in the orchestration rules are active"
+
+  CODEX_DIR="$HOME/.codex"
+  mkdir -p "$CODEX_DIR"
+
+  read -r -d '' PROVIDER_BLOCK <<'TOML' || true
+# Usage-based billing fallback, used by: codex exec --profile api
+# The key is read from OPENAI_API_KEY at run time, never stored here.
+[model_providers.openai-api]
+name = "OpenAI API (usage-based)"
+base_url = "https://api.openai.com/v1"
+env_key = "OPENAI_API_KEY"
+wire_api = "responses"
+TOML
+
+  CODEX_CONFIG="$CODEX_DIR/config.toml"
+  if [ ! -f "$CODEX_CONFIG" ]; then
+    printf '%s
+' "$PROVIDER_BLOCK" > "$CODEX_CONFIG"
+    step "Created $CODEX_CONFIG"
+  elif ! grep -qF '[model_providers.openai-api]' "$CODEX_CONFIG"; then
+    printf '
+%s
+' "$PROVIDER_BLOCK" >> "$CODEX_CONFIG"
+    step "Added the openai-api provider to $CODEX_CONFIG"
+  else
+    step "Codex openai-api provider already present"
+  fi
+
+  API_PROFILE="$CODEX_DIR/api.config.toml"
+  if [ ! -f "$API_PROFILE" ]; then
+    printf 'model_provider = "openai-api"
+' > "$API_PROFILE"
+    step "Created Codex profile 'api' at $API_PROFILE"
+  else
+    step "Codex profile 'api' already present"
+  fi
+
+  if [ -n "${OPENAI_API_KEY:-}" ]; then
+    step "OPENAI_API_KEY is set; the 'api' fallback profile is ready"
+  else
+    echo "warning: OPENAI_API_KEY is not set; 'codex exec --profile api' will fail until it is." >&2
+  fi
 else
   step "codex CLI not on PATH; orchestration rules fall back to Claude-only routes"
 fi
