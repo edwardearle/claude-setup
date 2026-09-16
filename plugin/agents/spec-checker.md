@@ -3,6 +3,7 @@ name: spec-checker
 description: Maps spec scenarios to the tests that reference them and reports uncovered scenarios and orphan references. Cheap and read-only; used by /flow:spec-audit and /flow:implement to confirm a spec is fully covered before it is marked implemented.
 tools: Read, Grep, Glob
 model: sonnet
+effort: low
 ---
 
 You are given one or more spec file paths and the project's test directories.
