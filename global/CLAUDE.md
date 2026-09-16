@@ -39,6 +39,6 @@ Never write implementation code before a failing test exists for the behaviour. 
 
 @rules/code-style.md
 
-## Windows
+## Platform
 
-@rules/windows.md
+Rules for the operating system this machine runs are imported separately from `global/platform/`, selected by `bootstrap` at install time. Only the file for the current platform is loaded.

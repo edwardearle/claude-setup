@@ -36,7 +36,7 @@ Classify every section of the existing instruction file:
 | Spec category tables, ID registries, test directory maps | Delete; the `specs/` layout replaces them |
 | Co-author lines, ticket formats from another organisation | Delete |
 
-Rewrite `CLAUDE.md` in the template shape. `git mv claude.md CLAUDE.md` if the case differs. Target under 80 lines. Present the before/after line counts and the moved sections; gate; commit `chore(claude): slim instructions to project-specific content`.
+Rewrite `CLAUDE.md` in the template shape. If only the case differs, rename in two steps (`git mv claude.md tmp && git mv tmp CLAUDE.md`); a direct case-only rename is a no-op on a case-insensitive filesystem. Target under 80 lines. Present the before/after line counts and the moved sections; gate; commit `chore(claude): slim instructions to project-specific content`.
 
 ## Phase 2: Specs
 

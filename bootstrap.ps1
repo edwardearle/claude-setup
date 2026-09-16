@@ -39,28 +39,37 @@ if (-not (Test-Path $ClaudeDir)) {
     New-Item -ItemType Directory -Path $ClaudeDir | Out-Null
 }
 
-# 1. Global CLAUDE.md import
-$globalMd = (Join-Path (Join-Path $RepoRoot 'global') 'CLAUDE.md').Replace([char]92, '/')
-$importLine = "@$globalMd"
+# 1. Global and platform CLAUDE.md imports
+$GlobalDir = Join-Path $RepoRoot 'global'
+$globalMd = (Join-Path $GlobalDir 'CLAUDE.md').Replace([char]92, '/')
+$platformMd = (Join-Path (Join-Path $GlobalDir 'platform') 'windows.md').Replace([char]92, '/')
 $userMd = Join-Path $ClaudeDir 'CLAUDE.md'
 
-if (Test-Path $userMd) {
-    $existing = Read-Text $userMd
-    if ($existing.Contains($importLine)) {
-        Write-Step "CLAUDE.md already imports $globalMd"
-    }
-    else {
-        Write-Utf8 $userMd ($existing.TrimEnd() + "`r`n`r`n" + $importLine + "`r`n")
-        Write-Step "Appended import to existing $userMd"
-    }
+$wanted = @("@$globalMd")
+if (Test-Path $platformMd) {
+    $wanted += "@$platformMd"
 }
 else {
-    Write-Utf8 $userMd ("# Global preferences (managed by claude-setup)`r`n`r`n" + $importLine + "`r`n")
+    Write-Warning "No platform rules at $platformMd; skipping that import."
+}
+
+if (-not (Test-Path $userMd)) {
+    Write-Utf8 $userMd "# Global preferences (managed by claude-setup)`r`n"
     Write-Step "Created $userMd"
 }
 
+$existing = Read-Text $userMd
+$missing = @($wanted | Where-Object { -not $existing.Contains($_) })
+if ($missing.Count -gt 0) {
+    Write-Utf8 $userMd ($existing.TrimEnd() + "`r`n`r`n" + ($missing -join "`r`n") + "`r`n")
+    Write-Step "Added $($missing.Count) import line(s) to $userMd"
+}
+else {
+    Write-Step "CLAUDE.md imports are current"
+}
+
 # 2. Merge settings
-$srcPath = Join-Path (Join-Path $RepoRoot 'global') 'settings.json'
+$srcPath = Join-Path $GlobalDir 'settings.json'
 $dstPath = Join-Path $ClaudeDir 'settings.json'
 $src = Read-Text $srcPath | ConvertFrom-Json
 if (Test-Path $dstPath) { $dst = Read-Text $dstPath | ConvertFrom-Json } else { $dst = New-Object PSObject }
@@ -144,5 +153,5 @@ else {
 
 Write-Host ""
 Write-Host "Done. Restart Claude Code, then check:"
-Write-Host "  /memory   should list $globalMd"
+Write-Host "  /memory   should list $globalMd and the platform rules"
 Write-Host "  /plugin   should show $PluginName from $MarketplaceName"

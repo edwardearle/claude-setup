@@ -1,4 +1,4 @@
-Primary machines run Windows 11. The Bash tool is git-bash; PowerShell is Windows PowerShell 5.1 unless `pwsh` is present.
+This machine runs Windows 11. The Bash tool is git-bash; PowerShell is Windows PowerShell 5.1 unless `pwsh` is present.
 
 - Prefer the Bash tool with forward-slash paths (`/c/code/...`). Reach for PowerShell only when a cmdlet is the point.
 - PowerShell 5.1 has no `&&`, `||`, `?:` or `??`. Native `2>&1` redirects wrap stderr in ErrorRecords and set `$?` false. Check `$LASTEXITCODE` after native calls.
