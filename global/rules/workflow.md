@@ -21,7 +21,7 @@
 
 ### Backlog
 
-Ideas and requests are not specs. Keep them in the project's issue tracker. Something becomes a spec when you decide to build it.
+Ideas and requests are not specs, even if they include a suggested spec, that is not to be taken as is, but rather a draft that serves as a starting point. Keep them in the project's issue tracker. Something becomes a spec when you decide to build it.
 
 ### Definition of done
 
