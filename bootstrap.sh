@@ -22,19 +22,31 @@ done
 step() { echo "==> $*"; }
 mkdir -p "$CLAUDE_DIR"
 
-# 1. Global CLAUDE.md import
-IMPORT_LINE="@$REPO_ROOT/global/CLAUDE.md"
+# 1. Global and platform CLAUDE.md imports
+case "$(uname -s)" in
+  Darwin)               PLATFORM_FILE="macos.md" ;;
+  Linux)                PLATFORM_FILE="linux.md" ;;
+  MINGW*|MSYS*|CYGWIN*) PLATFORM_FILE="windows.md" ;;
+  *)                    PLATFORM_FILE="" ;;
+esac
+
 USER_MD="$CLAUDE_DIR/CLAUDE.md"
-if [ -f "$USER_MD" ]; then
-  if grep -qF "$IMPORT_LINE" "$USER_MD"; then
-    step "CLAUDE.md already imports global preferences"
-  else
-    printf '\n%s\n' "$IMPORT_LINE" >> "$USER_MD"
-    step "Appended import to existing $USER_MD"
-  fi
-else
-  printf '# Global preferences (managed by claude-setup)\n\n%s\n' "$IMPORT_LINE" > "$USER_MD"
+if [ ! -f "$USER_MD" ]; then
+  printf '# Global preferences (managed by claude-setup)\n' > "$USER_MD"
   step "Created $USER_MD"
+fi
+
+add_import() {
+  if grep -qF "$1" "$USER_MD"; then return 0; fi
+  printf '\n%s\n' "$1" >> "$USER_MD"
+  step "Added import: $1"
+}
+
+add_import "@$REPO_ROOT/global/CLAUDE.md"
+if [ -n "$PLATFORM_FILE" ] && [ -f "$REPO_ROOT/global/platform/$PLATFORM_FILE" ]; then
+  add_import "@$REPO_ROOT/global/platform/$PLATFORM_FILE"
+else
+  step "No platform rules for $(uname -s); skipping that import"
 fi
 
 # 2. Merge settings (requires jq)
