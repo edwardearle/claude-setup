@@ -55,6 +55,8 @@ Design choices worth knowing:
 
 `global/rules/orchestration.md` holds a cost/intelligence/taste table for Haiku, Sonnet, Opus, Fable and GPT-5.5 via Codex, with rules for which to hand what. The numbers are starting estimates: edit them as you learn what each model is worth to you. Codex rows apply only when `codex` is on PATH; `bootstrap` tells you whether it is.
 
+When Codex is installed, `bootstrap` also writes `~/.codex/config.toml` and `~/.codex/api.config.toml`: a profile that bills the OpenAI API from `OPENAI_API_KEY` instead of ChatGPT plan credits. Plan credits stay the default (a stored ChatGPT login wins over the environment variable); `codex exec --profile api` is the fallback when they run out, and `/flow:review` retries on it once if Codex stops on a usage limit. Codex has no automatic billing failover of its own.
+
 ## Layout
 
 ```
