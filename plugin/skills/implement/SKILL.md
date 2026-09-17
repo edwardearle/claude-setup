@@ -19,7 +19,7 @@ Plan: $ARGUMENTS
 
 1. Do the tasks in order, ticking each checkbox in the plan file as it completes.
 2. **Red before green.** In a test phase, run the new tests and confirm they fail for the reason the scenario describes, not because of a typo or a missing import. In a code phase, write no line of implementation that a failing test does not demand.
-3. Route the work as the plan suggests. Bulk mechanical phases go to a Codex or Sonnet agent with a self-contained brief: the spec text, the failing tests, the files to touch, the command that must go green. Judgement stays in this session.
+3. Route the work as the plan suggests. Bulk mechanical phases go to a Sonnet agent, or Opus where the plan leaves decisions open, with a self-contained brief: the spec text, the failing tests, the files to touch, the command that must go green. Judgement stays in this session. Codex is for the review, not the typing.
 4. Run the tests relevant to the phase as you go, and the full suite plus lint at the gate.
 5. **Gate.** Update `## State`, then use `AskUserQuestion` with two options: commit and continue to the next phase, or stay in this phase. Commit only on the first. Stage paths by name. Commit body names the specs.
 6. If you learn the spec is wrong, stop. Record it under `## Deviations`, and ask whether to amend the spec with `/flow:spec` before continuing. Do not quietly build something the spec does not describe.

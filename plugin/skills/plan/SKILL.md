@@ -17,7 +17,7 @@ Read the spec(s) first. If any is not `accepted`, stop and say which; the user c
 2. **Explore.** Find the code the spec touches, the tests that exist for it, the test runner and lint commands (read the project `CLAUDE.md` and package manifest). Delegate wide reads to an `Explore` agent and keep only the conclusions.
 3. **Regression gate.** Judge the existing test coverage of the behaviour this change will alter. If it is thin, Phase 0 backfills tests that pin current behaviour before anything changes. This is not TDD for the new behaviour; it is insurance for the old. Skip Phase 0 only when coverage is already adequate or the code is being deleted, and say which.
 4. **Design the phases.** Use the template below. Each phase is independently committable and leaves the suite green. Each test task names the scenario it covers. Prefer more unit tests and fewer end-to-end tests where both give the same confidence.
-5. **Route the work.** For each phase, note which model should do it under the orchestration rules (bulk mechanical -> Codex or Sonnet; design or judgement -> main session). This is a suggestion `/flow:implement` follows.
+5. **Route the work.** For each phase, note which model should do it under the orchestration rules (bulk mechanical -> Sonnet, Opus where decisions remain; design or judgement -> main session). This is a suggestion `/flow:implement` follows.
 6. **Present via `ExitPlanMode`.** On approval, write `plans/<slug>.md`, then stop. Do not implement. Tell the user to run `/flow:implement <slug>`.
 
 ## Plan template
@@ -45,7 +45,7 @@ Gate: suite green, commit `reg(auth): pin existing sign-in behaviour`
 Gate: new tests fail for the right reason, existing tests green, commit `test(auth): specify sign-in and lockout`
 
 ## Phase 2: Green
-Route: Codex if available, else Sonnet agent
+Route: Sonnet agent
 - [ ] minimum implementation to pass Phase 1 tests
 Gate: full suite green, lint green, commit `feat(auth): implement sign-in lockout`
 
