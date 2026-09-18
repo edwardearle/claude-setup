@@ -2,6 +2,7 @@
 - Types: `feat`, `fix`, `test`, `reg` (regression tests capturing existing behaviour), `refactor`, `docs`, `chore`, `build`, `ci`, `style`.
 - Commit only when asked, or at a plan phase gate the user has just approved. Never commit as a side effect of another request.
 - Never push, force-push, rewrite shared history, or open a PR without being asked.
+- A PR to `main` carries a documentation review. Before opening one, run `/flow:review`, which checks the README and every document it links for statements the change made untrue, broken paths and missing entries. Fix what it finds, and record the outcome in the PR body under a `Docs:` line: what was checked, what changed, or that nothing needed to.
 - Do not commit on `main` or `master` unless the user explicitly says to for this commit. Suggest a branch: `<type>/<slug>`.
 - Small commits: a guide is under 10 files and around 200 lines. If a change is bigger, it is probably two commits.
 - `git status --short` first, then stage paths by name. Never `git add -A` or `git add .`.

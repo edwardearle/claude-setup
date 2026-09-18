@@ -31,6 +31,7 @@ Anything else goes to Claude. If you find yourself briefing Codex because the wo
 - Cost should not be the primary motivator for choosing the right model. Take advantage of low cost models for low risk, low complexity work, or to gain information, or to experiment before moving on to more expensive models for higher impact work.
 - **Bulk mechanical work** (implementing an approved plan phase against a clear spec, migrations, data transformation, test scaffolding): Sonnet, or Opus where the plan leaves real decisions open. Not Codex; the briefing costs more than the phase.
 - **Anything user-facing** (UI, copy, API shape, error messages): taste >= 8, so Opus or Fable.
+- **Documentation prose** (a README, a guide, anything a person reads cold): taste >= 9, so Fable or Astra. Checking whether existing documentation is still true is a comparison job, not a writing job: Sonnet at low or medium effort, as `flow:docs-checker` does. Never let the checker rewrite; it reports, a stronger model writes.
 - **Reviews** come from a **different model** than the one that wrote the code. Use a cheaper model for reviewing smaller changes only. Prefer Fable or Opus when shipping meaningful changes. Add Codex as a second, independent opinion when it is available; disagreement between reviewers is signal.
 - **Search and summarise** (find the files, read the logs, condense a long document): Haiku or the built-in `Explore` agent. Never Haiku for code that ships.
 - **Design decisions, spec writing, plan design, anything ambiguous**: the main session, Fable or Opus.
