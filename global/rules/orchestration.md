@@ -11,12 +11,26 @@ Rankings are 1-10, higher is better, with the exception of cost where lower is b
 | GPT-5.6 Sol via Codex | 6 | 7 | 5 | `codex exec` through Bash, **only when `codex` is on PATH** |
 | GPT-6 Astra via Codex | 10 | 9 | 7 | `codex exec` through Bash, **only when `codex` is on PATH** |
 
+### Claude by default
+
+Delegate to a Claude model unless you can say what Codex buys that a Claude model cannot. That it is installed is not a reason.
+
+The table understates what Codex costs. It arrives with none of this session's context, so every call needs a self-contained brief, a wrapper agent to write it, and a result read back and verified: two model calls and a full restatement of the problem for one unit of work. A Claude subagent inherits the repo and the conversation and starts on the problem. Spend Codex on independence, not on throughput.
+
+Codex earns its place when:
+
+- **Reviewing.** A different lineage disagrees for different reasons, and that disagreement is what you are buying. This is the routine case, and usually the only one.
+- **Two Claude attempts have failed.** A different prior beats a third go with the same one.
+- **The change is load-bearing.** Migrations, security-sensitive work, architectural commitments: an independent opinion is cheap next to being wrong.
+
+Anything else goes to Claude. If you find yourself briefing Codex because the work is large rather than because it is contested, use Sonnet.
+
 ### How to apply
 
 - These are defaults, not limits. You have standing permission to override them: if a cheaper model's output does not meet the bar, rerun or redo with a smarter one without asking. Judge the output, not the price tag. Escalating costs less than shipping something mediocre.
-- Cost should not be the primary motivator for chosing the right model. Take advantage of low cost models for low risk, low complexity work, or to gain information, or to experiment before moving on to more expensive models for higher impact work.
-- **Bulk mechanical work** (implementing an approved plan phase against a clear spec, migrations, data transformation, test scaffolding): the cheapest model with intelligence >= 7. Codex when available, otherwise Sonnet.
-- **Anything user-facing** (UI, copy, API shape, error messages): taste >= 8.
+- Cost should not be the primary motivator for choosing the right model. Take advantage of low cost models for low risk, low complexity work, or to gain information, or to experiment before moving on to more expensive models for higher impact work.
+- **Bulk mechanical work** (implementing an approved plan phase against a clear spec, migrations, data transformation, test scaffolding): Sonnet, or Opus where the plan leaves real decisions open. Not Codex; the briefing costs more than the phase.
+- **Anything user-facing** (UI, copy, API shape, error messages): taste >= 8, so Opus or Fable.
 - **Reviews** come from a **different model** than the one that wrote the code. Use a cheaper model for reviewing smaller changes only. Prefer Fable or Opus when shipping meaningful changes. Add Codex as a second, independent opinion when it is available; disagreement between reviewers is signal.
 - **Search and summarise** (find the files, read the logs, condense a long document): Haiku or the built-in `Explore` agent. Never Haiku for code that ships.
 - **Design decisions, spec writing, plan design, anything ambiguous**: the main session, Fable or Opus.
@@ -27,6 +41,7 @@ Rankings are 1-10, higher is better, with the exception of cost where lower is b
 - Codex: `codex exec "<self-contained prompt>"` via Bash from the working directory. For review or investigation use `codex exec -s read-only "<prompt>"`. Codex has none of this session's context, so the prompt must carry the spec, the constraints and the acceptance criteria.
 - Keep Codex output out of the main context: spawn a thin `Agent` (`model: "sonnet"`, `effort "low"`) whose job is to write the self-contained prompt, run `codex exec`. Use `schema` on the prompt wrapper to get structured output.
 - Always label these agents with `gpt-5.6:` or `gpt-6:` prefix (as appropriate for the task) so that it is clear that the real agent is codex rather than the wrapper's claude model
+- Codex runs on plan credits until they are gone, then `codex exec --profile api` bills the card. One more reason not to spend it on work Sonnet would have done.
 - Confirm the result compiles and tests pass, and return a short summary.
 - If `codex` is not on PATH, skip the Codex rows silently and use the Claude alternative. Do not attempt to install it.
 
