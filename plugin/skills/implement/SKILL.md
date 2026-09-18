@@ -26,7 +26,7 @@ Plan: $ARGUMENTS
 
 ## Finishing
 
-- Phase 4 includes `/flow:review`. Address blockers before the final commit; list anything deliberately left.
+- Phase 4 includes `/flow:review`, whose documentation check covers the README and everything it links. Address blockers and stale documentation before the final commit; list anything deliberately left.
 - Set each spec's `status: implemented` once every scenario has a passing test that references it.
 - Delete the plan file in the final commit. Say so; git history keeps it.
 - Report: commits made, tests added (count and the scenarios they cover), anything not done and why.
