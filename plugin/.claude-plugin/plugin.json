@@ -1,7 +1,7 @@
 {
   "name": "flow",
   "description": "Spec-first, test-driven delivery workflow with model orchestration and independent review.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "Ed Earle"
   }

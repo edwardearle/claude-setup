@@ -25,4 +25,4 @@ Ideas and requests are not specs, even if they include a suggested spec, that is
 
 ### Definition of done
 
-Spec `implemented`; tests reference it; full suite and lint green; reviewed by a different model; plan deleted; commits reference the spec.
+Spec `implemented`; tests reference it; full suite and lint green; reviewed by a different model; README and the documents it links still true after the change; plan deleted; commits reference the spec.

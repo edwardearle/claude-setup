@@ -40,8 +40,9 @@ Non-trivial work goes **spec -> plan -> implement -> review**.
 | `/flow:spec <behaviour>` | Agree what should happen before anything is built. Plain Given/When/Then, one behaviour per file, stable scenario names. | `specs/<area>/<slug>.md` |
 | `/flow:plan <spec-id>` | Phased, test-first plan in plan mode. Phase 0 backfills regression tests where existing coverage is thin. | `plans/<slug>.md` |
 | `/flow:implement <slug>` | Executes the plan phase by phase. Red before green, gate and commit per phase, plan checkboxes kept current. Deletes the plan on completion. | commits |
-| `/flow:review [base]` | Review by a model that did not write the code, plus Codex as a second opinion when installed. Findings verified before they are reported. | nothing |
+| `/flow:review [base]` | Review by a model that did not write the code, plus Codex as a second opinion when installed, plus a check that the README and everything it links are still true. Findings verified before they are reported. | nothing |
 | `/flow:spec-audit [area]` | Coverage derived from spec references in test titles. Replaces hand-maintained gap documents. | nothing |
+| `/flow:readme [check \| path]` | Create, improve or check a README and the documents it links against the recipe in `plugin/skills/readme/RECIPE.md`. `check` runs the `flow:docs-checker` agent alone. | `README.md`, `docs/` |
 | `/flow:migrate` | Moves an existing project onto this layout in five gated phases. | branch `chore/flow-migration` |
 
 Design choices worth knowing:
@@ -50,6 +51,7 @@ Design choices worth knowing:
 - **Coverage is derived**, never recorded. Tests carry the spec ID in their title; the audit greps for it. A hand-maintained matrix is stale by construction.
 - **Plans are committed.** They are the resumable state of in-flight work across sessions and devices. Git history keeps them after the file is deleted on merge.
 - **Reviews cross models.** The value of a review is independence; the same model re-reading its own diff has little.
+- **Documentation is reviewed with the code.** A PR to `main` carries a `Docs:` line stating what the check found and what changed. Checking whether a sentence is still true is cheap and goes to Sonnet; writing the replacement is prose and goes to Fable or Astra.
 
 ## Model orchestration
 
@@ -63,8 +65,8 @@ When Codex is installed, `bootstrap` also writes `~/.codex/config.toml` and `~/.
 .claude-plugin/marketplace.json   marketplace manifest (name: ede)
 plugin/                           the flow plugin
   .claude-plugin/plugin.json
-  skills/{spec,plan,implement,review,spec-audit,migrate}/
-  agents/{reviewer,spec-checker}.md
+  skills/{spec,plan,implement,review,spec-audit,readme,migrate}/
+  agents/{reviewer,spec-checker,docs-checker}.md
   hooks/hooks.json, guard-git.sh  blocks git add -A, force push, --no-verify, hard reset
 global/
   CLAUDE.md                       imported by ~/.claude/CLAUDE.md
