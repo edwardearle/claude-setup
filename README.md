@@ -44,6 +44,7 @@ Non-trivial work goes **spec -> plan -> implement -> review**.
 | `/flow:spec-audit [area]` | Coverage derived from spec references in test titles. Replaces hand-maintained gap documents. | nothing |
 | `/flow:readme [check \| path]` | Create, improve or check a README and the documents it links against the recipe in `plugin/skills/readme/RECIPE.md`. `check` runs the `flow:docs-checker` agent alone. | `README.md`, `docs/` |
 | `/flow:migrate` | Moves an existing project onto this layout in five gated phases. | branch `chore/flow-migration` |
+| `/flow:pickup [issue]` | Takes a tracker issue from the board through refinement and branching, hands over to the flow skills at each stage, and keeps board status current. Uses the `github-projects-v2` skill when installed. | branch, board status, issue comment |
 
 Design choices worth knowing:
 
@@ -65,7 +66,7 @@ When Codex is installed, `bootstrap` also writes `~/.codex/config.toml` and `~/.
 .claude-plugin/marketplace.json   marketplace manifest (name: ede)
 plugin/                           the flow plugin
   .claude-plugin/plugin.json
-  skills/{spec,plan,implement,review,spec-audit,readme,migrate}/
+  skills/{spec,plan,implement,review,spec-audit,readme,migrate,pickup}/
   agents/{reviewer,spec-checker,docs-checker}.md
   hooks/hooks.json, guard-git.sh  blocks git add -A, force push, --no-verify, hard reset
 global/
