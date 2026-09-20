@@ -9,7 +9,7 @@ Rankings are 1-10, higher is better, with the exception of cost where lower is b
 | Opus 5 | 6 | 7 | 8 | `Agent` with `model: "opus"` |
 | Fable 5.1 | 9 | 10 | 9 | `Agent` with `model: "fable"`, or the main session |
 | GPT-5.6 Sol via Codex | 6 | 7 | 5 | `codex exec` through Bash, **only when `codex` is on PATH** |
-| GPT-6 Astra via Codex | 10 | 9 | 7 | `codex exec` through Bash, **only when `codex` is on PATH** |
+| GPT-6 Astra via Codex | 10 | 9 | 7 (9 for SVG) | `codex exec` through Bash, **only when `codex` is on PATH** |
 
 ### Claude by default
 
@@ -22,6 +22,7 @@ Codex earns its place when:
 - **Reviewing.** A different lineage disagrees for different reasons, and that disagreement is what you are buying. This is the routine case, and usually the only one.
 - **Two Claude attempts have failed.** A different prior beats a third go with the same one.
 - **The change is load-bearing.** Migrations, security-sensitive work, architectural commitments: an independent opinion is cheap next to being wrong.
+- **The artefact is an SVG.** Astra draws better SVG than any Claude model, static or animated. This is a capability gap, not a preference.
 
 Anything else goes to Claude. If you find yourself briefing Codex because the work is large rather than because it is contested, use Sonnet.
 
@@ -31,6 +32,8 @@ Anything else goes to Claude. If you find yourself briefing Codex because the wo
 - Cost should not be the primary motivator for choosing the right model. Take advantage of low cost models for low risk, low complexity work, or to gain information, or to experiment before moving on to more expensive models for higher impact work.
 - **Bulk mechanical work** (implementing an approved plan phase against a clear spec, migrations, data transformation, test scaffolding): Sonnet, or Opus where the plan leaves real decisions open. Not Codex; the briefing costs more than the phase.
 - **Anything user-facing** (UI, copy, API shape, error messages): taste >= 9, so Fable. Opus only when the `Agent` tool cannot launch `model: "fable"`.
+- **Drawing an SVG, including animated SVG**: Astra via Codex, whether it ships as a file or inline in markup. This wins over the user-facing rule above: an icon, an illustration, a diagram or a motion piece goes to Astra even though it is UI. Brief it with the dimensions, the palette, the theming rules and whether motion is wanted. If the result misses the brief, re-brief it rather than patching it by hand; wiring it into the markup is not patching. Changing an SVG that already exists, whether a fill, a size, a `viewBox` or an `aria-` attribute, is an ordinary code change and goes where it otherwise would, as does code that emits SVG at runtime, such as a chart component. If `codex` is not on PATH, say so before falling back to Fable, or Opus if Fable cannot be launched, because the drop in quality is visible.
+- **Imagery nobody asked for**: ask first, in any format, SVG included. Do not decide on the user's behalf that a deliverable wants a picture: propose it in one line and wait. Once it has been asked for, it follows the rules above. A raster image needs a tool that can generate one; if the session has none, say so rather than substituting something else.
 - **Documentation prose** (a README, a guide, anything a person reads cold): taste >= 9, so Fable or Astra. Checking whether existing documentation is still true is a comparison job, not a writing job: Sonnet at low or medium effort, as `flow:docs-checker` does. Never let the checker rewrite; it reports, a stronger model writes.
 - **Reviews** come from a **different model** than the one that wrote the code. Use a cheaper model for reviewing smaller changes only. Prefer Fable or Opus when shipping meaningful changes. Add Codex as a second, independent opinion when it is available; disagreement between reviewers is signal.
 - **Search and summarise** (find the files, read the logs, condense a long document): Haiku or the built-in `Explore` agent. Never Haiku for code that ships.
@@ -39,12 +42,12 @@ Anything else goes to Claude. If you find yourself briefing Codex because the wo
 ### Mechanics
 
 - Claude models: the `Agent` tool's `model` parameter. Independent agents go in one message so they run in parallel.
-- Codex: `codex exec "<self-contained prompt>"` via Bash from the working directory. For review or investigation use `codex exec -s read-only "<prompt>"`. Codex has none of this session's context, so the prompt must carry the spec, the constraints and the acceptance criteria.
+- Codex: `codex exec "<self-contained prompt>"` via Bash from the working directory. For review or investigation use `codex exec -s read-only "<prompt>"`. Which model that reaches is whatever Codex is configured to default to; where the choice matters, pin it with `-m`, e.g. `-m gpt-6-astra`. Codex has none of this session's context, so the prompt must carry the spec, the constraints and the acceptance criteria.
 - Keep Codex output out of the main context: spawn a thin `Agent` (`model: "sonnet"`, `effort "low"`) whose job is to write the self-contained prompt, run `codex exec`. Use `schema` on the prompt wrapper to get structured output.
 - Always label these agents with `gpt-5.6:` or `gpt-6:` prefix (as appropriate for the task) so that it is clear that the real agent is codex rather than the wrapper's claude model
 - Codex runs on plan credits until they are gone, then `codex exec --profile api` bills the card. One more reason not to spend it on work Sonnet would have done.
 - Confirm the result compiles and tests pass, and return a short summary.
-- If `codex` is not on PATH, skip the Codex rows silently and use the Claude alternative. Do not attempt to install it.
+- If `codex` is not on PATH, skip the Codex rows silently and use the Claude alternative. Do not attempt to install it. The exception is SVG: say that Codex is unavailable before falling back, since the drop in quality is visible.
 
 ### Context hygiene
 

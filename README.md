@@ -58,6 +58,8 @@ Design choices worth knowing:
 
 `global/rules/orchestration.md` holds a cost/intelligence/taste table for Haiku, Sonnet, Opus, Fable and GPT-5.6 and GPT-6 via Codex, with rules for which to hand what. Claude models are the default: Codex is for independent review, for a problem two Claude attempts have failed, and for load-bearing changes, because briefing a model that holds none of the session's context costs more than the table suggests. The numbers are starting estimates: edit them as you learn what each model is worth to you. Codex rows apply only when `codex` is on PATH; `bootstrap` tells you whether it is.
 
+SVG is the one place Codex wins on craft rather than independence: Astra draws better static and animated SVG than any Claude model, so drawing one goes to it. Editing an SVG that already exists is just a code change and stays where it would otherwise go. Imagery is opt-in in every format: a picture you did not ask for gets proposed in one line and waits for your answer.
+
 When Codex is installed, `bootstrap` also writes `~/.codex/config.toml` and `~/.codex/api.config.toml`: a profile that bills the OpenAI API from `OPENAI_API_KEY` instead of ChatGPT plan credits. Plan credits stay the default (a stored ChatGPT login wins over the environment variable); `codex exec --profile api` is the fallback when they run out, and `/flow:review` retries on it once if Codex stops on a usage limit. Codex has no automatic billing failover of its own.
 
 ## Layout
