@@ -15,7 +15,8 @@ Coverage is derived, never recorded by hand. This skill writes nothing unless th
 1. **Inventory specs.** Glob `specs/**/*.md` (excluding `README.md` and `MIGRATION-MAP.md`). For each: spec ID from the path, `status` and `aliases` from frontmatter, scenario names from `### ` headings under `## Scenarios`.
 2. **Find references.** Identify test directories from the project `CLAUDE.md` or by convention (`__tests__`, `*.test.*`, `*.spec.*`, `e2e/`, `tests/`, `*Tests/`). For each spec ID and each alias, Grep for the literal string. For each scenario, Grep for `<scenario>:` within files that reference the parent spec.
 3. **Find orphans.** Grep test directories for anything shaped like a spec reference (`describe('<word>/<word>`, `Trait("Spec"`, legacy `SPEC-[A-Z]+-[0-9]+`) and check each resolves to a spec file or an alias.
-4. **Report.**
+4. **Check the guides.** For each area, read `specs/<area>/README.md` if it exists. List implemented specs with no guide in their area, implemented specs the guide never links, and guide links that point at a missing spec, a missing scenario, or a `superseded` spec.
+5. **Report.**
 
 ```markdown
 ## Coverage: <area or all>
@@ -31,9 +32,10 @@ Coverage is derived, never recorded by hand. This skill writes nothing unless th
 - Accepted specs with no tests: ...
 - Tests referencing unknown specs: `<file>:<line>` -> `<reference>`
 - Drafts older than 30 days: ...
+- Guides: areas with implemented specs and no guide; implemented specs the guide does not link; guide links to missing or superseded specs
 ```
 
-5. Suggest next actions, one line each. Do not create specs, tests or plans from this skill.
+6. Suggest next actions, one line each (`/flow:guide <area>` for guide gaps). Do not create specs, tests, plans or guides from this skill.
 
 ## Rules
 

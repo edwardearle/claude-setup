@@ -2,6 +2,8 @@
 
 Path: `specs/<area>/<slug>.md`. The spec ID is `<area>/<slug>`. Areas are short nouns for a part of the product (`auth`, `billing`, `search`, `mobile`); slugs describe one behaviour (`sign-in`, `monthly-credit-reset`).
 
+`specs/<area>/README.md` is the area guide, never a spec. It summarises the area's implemented behaviour by journey and is written by `/flow:guide`.
+
 ```markdown
 ---
 status: draft            # draft | accepted | implemented | superseded
