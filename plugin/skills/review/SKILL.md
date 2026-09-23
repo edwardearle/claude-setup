@@ -11,8 +11,8 @@ Base: $ARGUMENTS (default `main`)
 ## Steps
 
 1. **Scope the change.** `git diff <base>...HEAD --stat`, with the full diff saved to the scratchpad. Read `plans/*.md` for the specs in play; otherwise take spec IDs from commit bodies and test titles in the diff.
-2. **Pick the reviewer.** It must be a different model from the one that wrote the code. If this session is Fable, use `opus`; if Opus, use `fable`; if Sonnet, use `opus`. Launch the `flow:reviewer` agent with that `model`, giving it: the base ref, the spec file paths, the plan path, and the test command. It produces the diff itself.
-3. **Second opinion.** If `codex` is on PATH, in the same message launch a thin `sonnet` agent that writes a self-contained brief (spec text, diff path, what to look for), runs `codex exec -s read-only`, and returns findings in the same shape. If not, skip without comment.
+2. **Pick the reviewer.** It must be a different model from the one that wrote the code: take the reviewer role's model for the author's model from the orchestration roles. Launch the `flow:reviewer` agent with that `model`, giving it: the base ref, the spec file paths, the plan path, and the test command. It produces the diff itself.
+3. **Second opinion.** If `codex` is on PATH, in the same message launch the second opinion role's wrapper agent, which writes a self-contained brief (spec text, diff path, what to look for), runs `codex exec -s read-only`, and returns findings in the same shape. If not, skip without comment.
    If Codex stops on a usage limit or exhausted credits, retry once with `codex exec --profile api -s read-only`, which bills the OpenAI API rather than the plan, and say so in the report. If the retry fails too, report the second opinion as unavailable; never drop it silently.
 4. **Documentation.** In the same message, launch the `flow:docs-checker` agent with the base ref and the spec areas the diff touches. It reads the README, every document it links, and those areas' guides, and reports broken paths, statements the diff made untrue, and additions the docs do not mention. This step is not optional: a PR to `main` cannot be opened until its findings are fixed or accepted.
 5. **Verify before reporting.** For each finding, open the code and confirm it. Drop anything you cannot reproduce or that the reviewer misread. Reviewers get line numbers wrong and invent APIs; you are the filter.
@@ -23,7 +23,7 @@ Base: $ARGUMENTS (default `main`)
    Then **spec drift**: behaviour in the diff no spec describes, and spec scenarios the diff should have covered but did not.
    Then **docs**: the checker's Broken, Stale and Missing items, verified. Broken and Stale are Should fix; Missing is Should fix when a new engineer would need it, otherwise a Nit. End with the one-line `Docs:` statement for the PR body.
    Each finding: `file:line`, one sentence, the failing input or state.
-7. Offer to fix blockers. Do not fix anything without being asked. Documentation fixes are prose: write them here if this session is Fable, otherwise hand them to a `fable` agent with the checker's findings and the recipe in `/flow:readme`. Guide fixes go through `/flow:guide`.
+7. Offer to fix blockers. Do not fix anything without being asked. Documentation fixes are prose: hand them to the prose writer role with the checker's findings and the recipe in `/flow:readme`. Guide fixes go through `/flow:guide`.
 
 ## Rules
 
