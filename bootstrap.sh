@@ -49,24 +49,7 @@ else
   step "No platform rules for $(uname -s); skipping that import"
 fi
 
-# 2. Merge settings (requires jq)
-SRC="$REPO_ROOT/global/settings.json"
-DST="$CLAUDE_DIR/settings.json"
-if command -v jq >/dev/null 2>&1; then
-  [ -f "$DST" ] || echo '{}' > "$DST"
-  tmp="$(mktemp)"
-  jq -s '
-    .[0] as $dst | .[1] as $src |
-    ($src | del(.permissions)) * $dst
-    | .permissions.allow = ((($dst.permissions.allow // []) + ($src.permissions.allow // [])) | unique)
-    | .permissions.deny  = ((($dst.permissions.deny  // []) + ($src.permissions.deny  // [])) | unique)
-  ' "$DST" "$SRC" > "$tmp" && mv "$tmp" "$DST"
-  step "Merged settings into $DST"
-else
-  step "jq not found; skipping settings merge. Copy the permissions from $SRC into $DST by hand."
-fi
-
-# 3. Plugin
+# 2. Plugin
 if [ "$SKIP_PLUGIN" -eq 0 ]; then
   if command -v claude >/dev/null 2>&1; then
     if claude plugin marketplace list 2>/dev/null | grep -qw "$MARKETPLACE_NAME"; then
@@ -86,6 +69,33 @@ if [ "$SKIP_PLUGIN" -eq 0 ]; then
   else
     echo "claude CLI not on PATH. Inside Claude Code run: /plugin marketplace add $SOURCE  then  /plugin install $PLUGIN_NAME@$MARKETPLACE_NAME" >&2
   fi
+fi
+
+# 3. Merge settings (requires jq)
+# Runs after the plugin step, and checks its result, because a merged key was once
+# lost while the plugin step ran. The cause is not confirmed.
+SRC="$REPO_ROOT/global/settings.json"
+DST="$CLAUDE_DIR/settings.json"
+if command -v jq >/dev/null 2>&1; then
+  [ -f "$DST" ] || echo '{}' > "$DST"
+  tmp="$(mktemp)"
+  jq -s '
+    .[0] as $dst | .[1] as $src |
+    ($src | del(.permissions)) * $dst
+    | .permissions.allow = ((($dst.permissions.allow // []) + ($src.permissions.allow // [])) | unique)
+    | .permissions.deny  = ((($dst.permissions.deny  // []) + ($src.permissions.deny  // [])) | unique)
+  ' "$DST" "$SRC" > "$tmp" && mv "$tmp" "$DST"
+  step "Merged settings into $DST"
+  missing="$(jq -rn --slurpfile d "$DST" --slurpfile s "$SRC" '
+    ($s[0] | del(.permissions) | keys) - ($d[0] | keys)
+    + ((($s[0].permissions.allow // []) - ($d[0].permissions.allow // [])) | map("permissions.allow " + .))
+    + ((($s[0].permissions.deny  // []) - ($d[0].permissions.deny  // [])) | map("permissions.deny " + .))
+    | join(", ")')"
+  if [ -n "$missing" ]; then
+    echo "warning: not in $DST after the merge: $missing. Close Claude Code and re-run bootstrap." >&2
+  fi
+else
+  step "jq not found; skipping settings merge. Copy the permissions from $SRC into $DST by hand."
 fi
 
 # 4. Codex

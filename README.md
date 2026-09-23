@@ -20,7 +20,7 @@ macOS, Linux or WSL: `./bootstrap.sh` (needs `jq` for the settings merge).
 
 Restart Claude Code. `/memory` should list the global import; `/plugin` should show `flow`.
 
-`bootstrap` is idempotent. It appends the import if `~/.claude/CLAUDE.md` already exists, adds permission rules without removing yours, and never overwrites a setting you already have.
+`bootstrap` is idempotent. It appends the import if `~/.claude/CLAUDE.md` already exists, adds permission rules without removing yours, and never overwrites a setting you already have. It merges settings after the plugin step and warns if any merged setting is missing afterwards.
 
 ## Update
 

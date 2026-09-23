@@ -5,8 +5,8 @@ Wires this clone of claude-setup into the local Claude Code installation.
 .DESCRIPTION
 Idempotent; safe to re-run after every git pull. It:
   1. Makes ~/.claude/CLAUDE.md import global/CLAUDE.md from this clone.
-  2. Merges global/settings.json into ~/.claude/settings.json (adds, never overwrites).
-  3. Registers this repo as a plugin marketplace and installs (or updates) the flow plugin.
+  2. Registers this repo as a plugin marketplace and installs (or updates) the flow plugin.
+  3. Merges global/settings.json into ~/.claude/settings.json (adds, never overwrites), then checks it stuck.
   4. Reports whether the codex CLI is available for the orchestration rules.
 
 .PARAMETER MarketplaceSource
@@ -68,7 +68,41 @@ else {
     Write-Step "CLAUDE.md imports are current"
 }
 
-# 2. Merge settings
+# 2. Plugin
+if (-not $SkipPlugin) {
+    $claude = Get-Command claude -ErrorAction SilentlyContinue
+    if (-not $claude) {
+        Write-Warning "claude CLI not on PATH. Inside Claude Code run: /plugin marketplace add $RepoRoot  then  /plugin install $PluginName@$MarketplaceName"
+    }
+    else {
+        $source = if ($MarketplaceSource -eq 'github') { $GitHubRepo } else { $RepoRoot }
+        $marketplaces = (& claude plugin marketplace list | Out-String)
+        if ($marketplaces -match "(?im)\b$MarketplaceName\b") {
+            Write-Step "Marketplace '$MarketplaceName' registered; updating"
+            & claude plugin marketplace update $MarketplaceName
+        }
+        else {
+            Write-Step "Registering marketplace from $source"
+            & claude plugin marketplace add $source
+        }
+        if ($LASTEXITCODE -ne 0) { Write-Warning "Marketplace step returned exit code $LASTEXITCODE" }
+
+        $installed = (& claude plugin list | Out-String)
+        if ($installed -match "(?im)\b$PluginName\b") {
+            Write-Step "Plugin '$PluginName' installed; updating"
+            & claude plugin update "$PluginName@$MarketplaceName"
+        }
+        else {
+            Write-Step "Installing plugin $PluginName@$MarketplaceName"
+            & claude plugin install "$PluginName@$MarketplaceName"
+        }
+        if ($LASTEXITCODE -ne 0) { Write-Warning "Plugin step returned exit code $LASTEXITCODE" }
+    }
+}
+
+# 3. Merge settings
+# Runs after the plugin step, and checks its result, because a merged key was once
+# lost while the plugin step ran. The cause is not confirmed.
 $srcPath = Join-Path $GlobalDir 'settings.json'
 $dstPath = Join-Path $ClaudeDir 'settings.json'
 $src = Read-Text $srcPath | ConvertFrom-Json
@@ -111,36 +145,19 @@ else {
     Write-Step "settings.json already up to date"
 }
 
-# 3. Plugin
-if (-not $SkipPlugin) {
-    $claude = Get-Command claude -ErrorAction SilentlyContinue
-    if (-not $claude) {
-        Write-Warning "claude CLI not on PATH. Inside Claude Code run: /plugin marketplace add $RepoRoot  then  /plugin install $PluginName@$MarketplaceName"
+$check = Read-Text $dstPath | ConvertFrom-Json
+$missing = @()
+foreach ($prop in $src.PSObject.Properties) {
+    if ($prop.Name -eq 'permissions') { continue }
+    if (-not ($check.PSObject.Properties.Name -contains $prop.Name)) { $missing += $prop.Name }
+}
+foreach ($list in @('allow', 'deny')) {
+    foreach ($rule in @($src.permissions.$list)) {
+        if ($null -ne $rule -and -not (@($check.permissions.$list) -contains $rule)) { $missing += "permissions.$list $rule" }
     }
-    else {
-        $source = if ($MarketplaceSource -eq 'github') { $GitHubRepo } else { $RepoRoot }
-        $marketplaces = (& claude plugin marketplace list | Out-String)
-        if ($marketplaces -match "(?im)\b$MarketplaceName\b") {
-            Write-Step "Marketplace '$MarketplaceName' registered; updating"
-            & claude plugin marketplace update $MarketplaceName
-        }
-        else {
-            Write-Step "Registering marketplace from $source"
-            & claude plugin marketplace add $source
-        }
-        if ($LASTEXITCODE -ne 0) { Write-Warning "Marketplace step returned exit code $LASTEXITCODE" }
-
-        $installed = (& claude plugin list | Out-String)
-        if ($installed -match "(?im)\b$PluginName\b") {
-            Write-Step "Plugin '$PluginName' installed; updating"
-            & claude plugin update "$PluginName@$MarketplaceName"
-        }
-        else {
-            Write-Step "Installing plugin $PluginName@$MarketplaceName"
-            & claude plugin install "$PluginName@$MarketplaceName"
-        }
-        if ($LASTEXITCODE -ne 0) { Write-Warning "Plugin step returned exit code $LASTEXITCODE" }
-    }
+}
+if ($missing.Count -gt 0) {
+    Write-Warning ("Not in $dstPath after the merge: " + ($missing -join ', ') + ". Close Claude Code and re-run bootstrap.")
 }
 
 # 4. Codex
