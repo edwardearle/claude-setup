@@ -11,8 +11,8 @@
     {
       "name": "flow",
       "source": "./plugin",
-      "description": "Spec-first, test-driven delivery workflow: /flow:spec, /flow:plan, /flow:implement, /flow:review, /flow:spec-audit, /flow:readme, /flow:migrate, /flow:pickup.",
-      "version": "0.4.1",
+      "description": "Design-first, spec-first, test-driven delivery workflow: /flow:design, /flow:spec, /flow:plan, /flow:implement, /flow:review, /flow:guide, /flow:capture, /flow:spec-audit, /flow:readme, /flow:migrate, /flow:pickup.",
+      "version": "0.5.0",
       "author": {
         "name": "Ed Earle"
       }
