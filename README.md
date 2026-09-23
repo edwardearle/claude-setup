@@ -4,7 +4,7 @@ My personal Claude Code configuration, versioned so it follows me between machin
 
 | Layer | What | How it reaches Claude Code |
 |-------|------|----------------------------|
-| **Global preferences** (`global/`) | Always-on `CLAUDE.md` rules: working style, spec-first TDD, model orchestration, source control, code style, plus the rules for this machine's operating system. A baseline permission allowlist. | `~/.claude/CLAUDE.md` imports `global/CLAUDE.md` and one file from `global/platform/`. `bootstrap` writes those lines and merges the settings. |
+| **Global preferences** (`global/`) | Always-on `CLAUDE.md` rules: working style, spec-first TDD, model orchestration, source control, code style, plus the rules for this machine's operating system. A baseline permission allowlist and the default main-session model (Opus). | `~/.claude/CLAUDE.md` imports `global/CLAUDE.md` and one file from `global/platform/`. `bootstrap` writes those lines and merges the settings. |
 | **`flow` plugin** (`plugin/`) | Skills, agents and hooks for the workflow. | This repo is a plugin marketplace. `claude plugin install flow@ede`. Updates via `claude plugin update flow`. |
 
 Plugins cannot carry always-on memory or `settings.json`, which is why the global layer needs the import. Everything else goes through the plugin so it is versioned and updated by the plugin system rather than by hand.
@@ -75,7 +75,7 @@ global/
   CLAUDE.md                       imported by ~/.claude/CLAUDE.md
   rules/*.md                      imported by global/CLAUDE.md, always loaded
   platform/{windows,macos}.md     one selected per machine by bootstrap
-  settings.json                   permission baseline merged by bootstrap
+  settings.json                   permission baseline and default model, merged by bootstrap
 templates/project/                starting CLAUDE.md and specs/README.md for a new project
 bootstrap.ps1, bootstrap.sh
 ```
