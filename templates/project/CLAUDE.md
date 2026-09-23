@@ -20,9 +20,21 @@ Global working preferences and the spec -> plan -> implement -> review workflow 
 | Build | `npm run build` |
 | Run locally | `npm run dev` |
 
+## Design system
+
+Design system: <Figma library URL | Claude design project | `packages/ui` with Storybook at `npm run storybook` | none>
+
+## Capture
+
+How `/flow:capture` reaches the app to screenshot journeys. Delete this section if the project has no user interface.
+
+- Start: `npm run dev`, then <http://localhost:3000>, or <the environment to use instead>
+- Reference data: <seed command, or the demo tenant or account to capture against>
+- Sign-in: <path to the saved sign-in state the test suite produces, or "by hand">
+
 ## Layout
 
-- `specs/` behaviour specs, one per file; see `specs/README.md`
+- `specs/` behaviour specs, one per file, and one guide per area at `specs/<area>/README.md`; see `specs/README.md`
 - `plans/` in-flight implementation plans (deleted on merge)
 - `src/` ...
 - `e2e/` ...
