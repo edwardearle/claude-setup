@@ -1,6 +1,6 @@
 ---
 name: pickup
-description: "Take a tracker issue from the board through refinement, the spec -> plan -> implement -> review workflow, and a PR, keeping the board status current. Invoke manually: /flow:pickup [issue number]"
+description: "Take a tracker issue from the board through design readiness, the spec -> plan -> implement -> review workflow, and a PR, keeping the board status current. Invoke manually: /flow:pickup [issue number]"
 argument-hint: "[issue number]"
 disable-model-invocation: true
 ---
@@ -9,15 +9,15 @@ disable-model-invocation: true
 
 Issue: $ARGUMENTS
 
-This skill is the glue between the issue tracker and the flow workflow. It owns picking, refining, branching and board status. It does not write specs, plans or code: those belong to `/flow:spec`, `/flow:plan` and `/flow:implement`, which only the user can start. At each hand-off, stop and give the user the exact command to type.
+This skill is the glue between the issue tracker and the flow workflow. It owns picking, branching and board status. It does not assess design or write specs, plans or code: those belong to `/flow:design`, `/flow:spec`, `/flow:plan` and `/flow:implement`, which only the user can start. At each hand-off, stop and give the user the exact command to type.
 
 ## Board operations
 
-If the `github-projects-v2` skill is installed, use its scripts (`show-board.sh`, `set-status.sh`). If it is not, do not guess at `gh project` field ids: ask the user how status is tracked, or leave status to them, and say so. Columns are **New -> Ready -> In Progress -> Done**. Ready items have been through automated refinement and carry Expected/Actual, a draft spec and Assumptions/Unknowns; New items have none of that, so step 3 will have more to establish and more to ask.
+If the `github-projects-v2` skill is installed, use its scripts (`show-board.sh`, `set-status.sh`). If it is not, do not guess at `gh project` field ids: ask the user how status is tracked, or leave status to them, and say so. Columns are **New -> Ready -> In Progress -> Done**. An item is Ready when its design section says `Readiness: ready`; `/flow:design` moves it there. A New item has not been assessed. Anything an automated refinement left on a New item (Expected/Actual, a draft spec, Assumptions/Unknowns) is input to `/flow:design`, not a substitute for it.
 
-## The refinement record
+## The design section
 
-Step 3 ends by writing a refinement record as a comment on the issue: the decisions, the spec ids to write (grouped into slices if the issue is large), and the codebase facts. Every later stage reads the issue's comments first and keys off that record, because a spec file does not name its issue and a plan names its specs, not its issue.
+`/flow:design` writes a design section at the end of the issue body, between `<!-- flow:design -->` markers: readiness, problem, outcome, scope, approach, interface, constraints, and the slices with the spec ids each will write or amend. Every later stage reads the issue first and keys off that section, because a spec file does not name its issue and a plan names its specs, not its issue. The pass comments beneath record how the design got there.
 
 ## Work out where the issue is
 
@@ -25,23 +25,24 @@ Read the issue with its comments, `git fetch`, and look for the branch locally a
 
 | Evidence | Stage | Next |
 |---|---|---|
-| No refinement record on the issue | Pick | Steps 1-3 |
-| Record exists; no branch locally or on the remote | Claim | Step 2, then the `/flow:spec` lines for the current slice |
-| Branch exists; a spec id in the record has no file, or its file is `draft` | Speccing | `/flow:spec <id>` for each such id |
+| No design section, or it says not ready, and the issue is not a bug with a reproduction and an agreed expected result | Design | Step 1, then step 2 |
+| Issue is an outcome with sub-issues | Outcome | Pick a sub-issue; each goes through this table on its own |
+| Design ready, or a bug with a reproduction and an agreed expected result; no branch locally or on the remote | Claim | Step 3, then the `/flow:spec` lines for the current slice |
+| Branch exists; a spec id in the current slice has no file, or its file is `draft` | Speccing | `/flow:spec <id>` for each such id |
 | Every spec in the current slice is `accepted`; no plan names them | Ready to plan | `/flow:plan <spec ids>` |
 | A plan naming them exists on the branch | Implementing | `/flow:implement <slug>` |
 | That plan has been deleted on the branch (its last phase ran) and no PR is open | Ready for PR | Step 5 |
 | PR open | In review | Report the PR state; nothing to do here |
-| PR merged; slices remain | Next slice | Step 2 for the next slice, from the default branch |
+| PR merged; slices remain | Next slice | Step 3 for the next slice, from the default branch |
 | PR merged; no slices remain | Done | Step 6 |
 
-The **current slice** is the first slice in the record with a spec not yet `implemented`. Rows are evaluated for that slice only. An issue already In Progress on the board with no branch anywhere was claimed elsewhere or its branch was deleted after a slice merged: say which and continue with the row that matches.
+The **current slice** is the first slice in the design section with a spec not yet `implemented`; for a bug with no design section, it is the bug itself. Rows are evaluated for that slice only. An issue already In Progress on the board with no branch anywhere was claimed elsewhere or its branch was deleted after a slice merged: say which and continue with the row that matches.
 
 ## Steps
 
 ### 1. Pick
 
-With no issue number: show the board, present Ready items as the primary picks (New as a fallback, flagged as unrefined), exclude In Progress and Done, and ask which. Stop and wait.
+With no issue number: show the board, present Ready items as the primary picks (New as a fallback, flagged as not yet assessed: picking one leads to `/flow:design`), exclude In Progress and Done, and ask which. Stop and wait.
 
 With an issue number, or once chosen:
 
@@ -49,9 +50,13 @@ With an issue number, or once chosen:
 gh issue view <N> --comments
 ```
 
-Read the comments: refinement notes, decisions and later corrections live there and may supersede the body.
+Read the comments: decisions and later corrections live there and may supersede the body.
 
-### 2. Branch and claim
+### 2. Design
+
+A bug with a reproduction and an agreed expected result needs no design: its expected result is the design, and it has a single slice. Go to step 3. Otherwise, if the issue has no design section, or it says not ready, stop and hand over `/flow:design <N>`. Do not claim the issue or branch until the design is ready: an unready issue claimed on the board blocks anyone else from shaping it.
+
+### 3. Branch and claim
 
 Branch fresh from the latest default branch. If the working tree is dirty, stop and ask; never stash or discard on the user's behalf.
 
@@ -63,17 +68,7 @@ git checkout -b <type>/<slug> origin/$DEFAULT
 
 `<slug>` names the behaviour, per the source-control rules. For a sliced issue, one branch per slice. Then move the issue to In Progress if it is not already.
 
-### 3. Refine
-
-The aim is that every `/flow:spec` run that follows can be answered from the record rather than from the user's memory.
-
-1. Restate the problem in a few lines.
-2. Survey the code the issue touches with an `Explore` agent: what exists, what the issue collides with, what is missing. Keep only the conclusions.
-3. Propose the spec split: `specs/<area>/<slug>.md`, one behaviour per file, at most about eight scenarios each, plus any existing specs that need amending. Group them into delivery slices if the issue is large; each slice is one plan and one PR.
-4. Ask the scope questions that change the shape of the work in a single `AskUserQuestion`: slicing, anything that amends an existing spec, anything the survey showed to be new rather than reuse, security or data-model choices. Leave scenario-level detail for `/flow:spec` to ask per file.
-5. Write the refinement record as a comment on the issue. If that write is not permitted, save it to the scratchpad, give the user the path, and ask them to paste it; later stages depend on it being on the issue.
-
-Then stop and hand over: one `/flow:spec` line per spec file in the first slice, in dependency order, each naming the issue, the part of the issue body it covers, and the refinement record.
+Then hand over: one `/flow:spec` line per spec in the current slice, in dependency order, each naming the issue and the part of the design section it covers.
 
 ### 4. Spec, plan, implement
 
@@ -94,4 +89,4 @@ Surface the PR URL. The issue stays In Progress: review may reject it.
 
 ### 6. Done
 
-After the last PR merges, and only then, move the issue to Done.
+After the last PR merges, and only then, move the issue to Done. A parent outcome is Done when its last sub-issue is; say so rather than moving it when one child finishes.

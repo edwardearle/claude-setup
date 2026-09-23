@@ -2,6 +2,8 @@
 
 Path: `specs/<area>/<slug>.md`. The spec ID is `<area>/<slug>`. Areas are short nouns for a part of the product (`auth`, `billing`, `search`, `mobile`); slugs describe one behaviour (`sign-in`, `monthly-credit-reset`).
 
+`specs/<area>/README.md` is the area guide, never a spec. It summarises the area's implemented behaviour by journey and is written by `/flow:guide`.
+
 ```markdown
 ---
 status: draft            # draft | accepted | implemented | superseded
@@ -51,7 +53,7 @@ Anything unresolved. The spec cannot be `accepted` while this section is non-emp
 |--------|---------|--------|
 | `draft` | Being written; open questions remain | `/flow:spec` |
 | `accepted` | User agreed this is the behaviour; may be planned | `/flow:spec` on approval |
-| `implemented` | Tests reference every scenario and pass on the default branch | `/flow:implement` at completion |
+| `implemented` | Tests reference every scenario and pass on the default branch | `/flow:implement` in the plan's Document phase |
 | `superseded` | Replaced by another spec named in that spec's `supersedes` | `/flow:spec` when writing the replacement |
 
 ## Scenario naming

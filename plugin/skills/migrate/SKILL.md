@@ -1,6 +1,6 @@
 ---
 name: migrate
-description: "Move an existing project onto the flow workflow: slim its CLAUDE.md to project-specific content, split monolithic specification documents into specs/<area>/<slug>.md, retire hand-maintained coverage documents in favour of derived audits, and bring in-flight plans under version control. Phased, gated, reversible. Invoke manually: /flow:migrate"
+description: "Move an existing project onto the flow workflow: slim its CLAUDE.md to project-specific content, split monolithic specification documents into specs/<area>/<slug>.md, retire hand-maintained coverage documents in favour of derived audits, write a first guide for each area, and bring in-flight plans under version control. Phased, gated, reversible. Invoke manually: /flow:migrate"
 disable-model-invocation: true
 ---
 
@@ -45,6 +45,7 @@ Rewrite `CLAUDE.md` in the template shape. If only the case differs, rename in t
 3. **Rewrite test references** mechanically from the map: `describe('SPEC-AUTH-007: ...')` -> `describe('auth/sign-in', ...)`, `@covers SPEC-AUTH-007` -> `@covers auth/sign-in`. Give this to a Sonnet agent with the map and the file list. Run the full suite: only names should have changed, so anything failing is a mistake in the rewrite.
 4. **Check.** Spec count in equals files out. Every old ID appears in exactly one `aliases`. Run `/flow:spec-audit`; there should be no orphan references.
 5. Gate; commit `refactor(specs): one file per behaviour with legacy ids as aliases`. Delete the monolith in a **separate** commit: `chore(specs): remove superseded specification document`.
+6. **Guides.** Run `/flow:guide` for every area with implemented specs. The guides describe what the migrated specs say, not what the code might do beyond them. Gate; commit `docs(specs): add area guides`.
 
 ## Phase 3: Coverage documents
 

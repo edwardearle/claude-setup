@@ -6,8 +6,8 @@ Rankings are 1-10, higher is better, with the exception of cost where lower is b
 |-------|------|--------------|-------|-----------------|
 | Haiku 4.5 | 1 | 2 | 3 | `Agent` with `model: "haiku"` |
 | Sonnet 5 | 3 | 5 | 6 | `Agent` with `model: "sonnet"` |
-| Opus 5 | 6 | 7 | 8 | `Agent` with `model: "opus"` |
-| Fable 5.1 | 9 | 10 | 9 | `Agent` with `model: "fable"`, or the main session |
+| Opus 5.5 | 5 | 9 | 8 | `Agent` with `model: "opus"`, or the main session |
+| Fable 5.1 | 9 | 10 | 9 | `Agent` with `model: "fable"` |
 | GPT-5.6 Sol via Codex | 6 | 7 | 5 | `codex exec` through Bash, **only when `codex` is on PATH** |
 | GPT-6 Astra via Codex | 10 | 9 | 7 (9 for SVG) | `codex exec` through Bash, **only when `codex` is on PATH** |
 
@@ -37,7 +37,7 @@ Anything else goes to Claude. If you find yourself briefing Codex because the wo
 - **Documentation prose** (a README, a guide, anything a person reads cold): taste >= 9, so Fable or Astra. Checking whether existing documentation is still true is a comparison job, not a writing job: Sonnet at low or medium effort, as `flow:docs-checker` does. Never let the checker rewrite; it reports, a stronger model writes.
 - **Reviews** come from a **different model** than the one that wrote the code. Use a cheaper model for reviewing smaller changes only. Prefer Fable or Opus when shipping meaningful changes. Add Codex as a second, independent opinion when it is available; disagreement between reviewers is signal.
 - **Search and summarise** (find the files, read the logs, condense a long document): Haiku or the built-in `Explore` agent. Never Haiku for code that ships.
-- **Design decisions, spec writing, plan design, anything ambiguous**: the main session, Fable or Opus.
+- **Design decisions, spec writing, plan design, anything ambiguous**: the main session (Opus). Hand it to Fable when Opus has not got there or the problem is hard enough to justify the cost.
 
 ### Mechanics
 

@@ -53,11 +53,15 @@ Gate: full suite green, lint green, commit `feat(auth): implement sign-in lockou
 - [ ] remove duplication introduced in Phase 2; no behaviour change
 Gate: suite green, commit `refactor(auth): ...` (omit the phase if nothing to do)
 
-## Phase 4: Verify
+## Phase 4: Document
+- [ ] set spec status to implemented
+- [ ] /flow:guide auth (every area whose specs changed status or were amended)
+Gate: commit `docs(auth): guide for sign-in lockout`, so the review sees the status change and the guide
+
+## Phase 5: Verify
 - [ ] full suite, lint, type check
 - [ ] manual check: <what the user should click through, if anything>
 - [ ] /flow:review
-- [ ] set spec status to implemented
 - [ ] delete this plan file
 Gate: commit `chore(auth): complete sign-in lockout`
 
@@ -70,4 +74,5 @@ Record here anything that departed from the plan or the spec, with the reason. I
 - Tests are named for scenarios, never for implementation units, so the plan reads as a checklist against the spec.
 - A phase with no test task is suspect. Documentation and pure-refactor phases are the exception; say so.
 - Keep the plan short. It is a checklist, not a design document. Design rationale goes in the plan-mode discussion and the commit messages.
+- The Document phase always names the areas for `/flow:guide`. A plan that delivers no spec (a pure refactor or documentation change) omits the phase and says why.
 - The plan is committed with the Phase 1 commit at the latest, so it is resumable from another session or device.
