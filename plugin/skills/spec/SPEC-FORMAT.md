@@ -53,7 +53,7 @@ Anything unresolved. The spec cannot be `accepted` while this section is non-emp
 |--------|---------|--------|
 | `draft` | Being written; open questions remain | `/flow:spec` |
 | `accepted` | User agreed this is the behaviour; may be planned | `/flow:spec` on approval |
-| `implemented` | Tests reference every scenario and pass on the default branch | `/flow:implement` at completion |
+| `implemented` | Tests reference every scenario and pass on the default branch | `/flow:implement` in the plan's Document phase |
 | `superseded` | Replaced by another spec named in that spec's `supersedes` | `/flow:spec` when writing the replacement |
 
 ## Scenario naming

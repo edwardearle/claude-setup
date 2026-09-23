@@ -21,7 +21,7 @@ Design that happened before Claude was involved (a proposal document, a Figma fi
 4. **Assess.** Mark each checklist item `ready`, `gap` or `deferred` (with the reason). One line of evidence per item. Do not pad a thin issue with invented detail: an assumption you make is a gap until the user confirms it.
 5. **Decide the size.** Using the breakdown rules in READINESS.md: one slice, several slices of one design, or an outcome whose parts each need their own design.
 6. **Close the gaps with the user.** Put every open question into one `AskUserQuestion` call with concrete options. Repeat only if the answers open new questions that change the shape of the work.
-7. **Record.** Write the design section and the pass comment (formats in READINESS.md). Show both to the user and post only on their approval. For an outcome, propose the sub-issues as a list first, then create and link them on approval. If the project uses a board and the design is ready, move the issue to Ready.
+7. **Record.** Write the design section and the pass comment (formats in READINESS.md). Show both to the user and post only on their approval. For an outcome, propose the sub-issues as a list first, then create and link them on approval. If the project uses a board, the design is ready and the issue is in New, move it to Ready. Never move an issue back from In Progress or Done.
 8. **Hand over.** Ready: give the next command, `/flow:pickup <N>` if the project uses a board, otherwise one `/flow:spec` line per spec in the first slice. Not ready: say what is missing and who can answer it. Do not start a spec.
 
 ## When nobody can answer
@@ -35,6 +35,7 @@ GitHub through `gh`:
 | Operation | Command |
 |-----------|---------|
 | Read | `gh issue view <N> --comments`, or `gh issue view <N> --json number,title,body,labels,url,comments` for structured output |
+| Read sub-issues and parent | `gh api repos/{owner}/{repo}/issues/<N>/sub_issues` and `gh api repos/{owner}/{repo}/issues/<N>/parent` (a 404 from the second means it has no parent) |
 | Update the body | Re-read the body immediately before writing, since `--body-file` replaces all of it and an edit made since the first read would be lost. Write the new body to the scratchpad, then `gh issue edit <N> --body-file <path>` |
 | Comment | `gh issue comment <N> --body-file <path>` |
 | Create a sub-issue | `gh issue create --title ... --body-file <path>`, then link it: `gh api repos/{owner}/{repo}/issues/<parent>/sub_issues -F sub_issue_id=$(gh api repos/{owner}/{repo}/issues/<child> --jq .id)` |
@@ -47,4 +48,4 @@ Another tracker (Azure DevOps, Jira) works the same way if its tools are connect
 - Never overwrite the issue author's text. The skill owns only the text between its markers.
 - Every tracker write is shown to the user before it is posted, except the unattended comment above. The permission allowlist lets `gh issue edit`, `gh issue comment`, `gh issue create` and `gh api` run without a prompt, so this approval step is the only check.
 - Bugs with a reproduction and an agreed expected result skip this skill: the expected result is the design. Say so and go to `/flow:spec`.
-- Write nothing to the repository. The design lives on the issue; the repository gets specs once the design is ready.
+- Write nothing to the repository except, with the user's agreement, the `Design system:` line in the project `CLAUDE.md`. The design lives on the issue; the repository gets specs once the design is ready.

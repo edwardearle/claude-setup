@@ -19,7 +19,7 @@ Non-trivial work follows **design -> spec -> plan -> implement -> review**, driv
 | Agree what the behaviour is | `/flow:spec` | `specs/<area>/<slug>.md`, status `accepted` |
 | Decide how to build it | `/flow:plan` | `plans/<slug>.md`, phased, tests first |
 | Build it | `/flow:implement` | One commit per phase, tests before code, then the area guide updated with `/flow:guide` |
-| Check it independently | `/flow:review` | Findings from a different model, and a check that the README and its linked documents are still true |
+| Check it independently | `/flow:review` | Findings from a different model, and a check that the README, its linked documents and the changed areas' guides are still true |
 | See what is uncovered | `/flow:spec-audit` | Coverage derived from test references |
 
 Trivial changes (a typo, a rename, a one-line fix whose test is obvious) skip the workflow. Say so in one line and carry on.

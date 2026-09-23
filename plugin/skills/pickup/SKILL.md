@@ -25,9 +25,9 @@ Read the issue with its comments, `git fetch`, and look for the branch locally a
 
 | Evidence | Stage | Next |
 |---|---|---|
-| No design section, or it says not ready | Design | Step 1, then step 2 |
+| No design section, or it says not ready, and the issue is not a bug with a reproduction and an agreed expected result | Design | Step 1, then step 2 |
 | Issue is an outcome with sub-issues | Outcome | Pick a sub-issue; each goes through this table on its own |
-| Design ready; no branch locally or on the remote | Claim | Step 3, then the `/flow:spec` lines for the current slice |
+| Design ready, or a bug with a reproduction and an agreed expected result; no branch locally or on the remote | Claim | Step 3, then the `/flow:spec` lines for the current slice |
 | Branch exists; a spec id in the current slice has no file, or its file is `draft` | Speccing | `/flow:spec <id>` for each such id |
 | Every spec in the current slice is `accepted`; no plan names them | Ready to plan | `/flow:plan <spec ids>` |
 | A plan naming them exists on the branch | Implementing | `/flow:implement <slug>` |
@@ -36,7 +36,7 @@ Read the issue with its comments, `git fetch`, and look for the branch locally a
 | PR merged; slices remain | Next slice | Step 3 for the next slice, from the default branch |
 | PR merged; no slices remain | Done | Step 6 |
 
-The **current slice** is the first slice in the design section with a spec not yet `implemented`. Rows are evaluated for that slice only. An issue already In Progress on the board with no branch anywhere was claimed elsewhere or its branch was deleted after a slice merged: say which and continue with the row that matches.
+The **current slice** is the first slice in the design section with a spec not yet `implemented`; for a bug with no design section, it is the bug itself. Rows are evaluated for that slice only. An issue already In Progress on the board with no branch anywhere was claimed elsewhere or its branch was deleted after a slice merged: say which and continue with the row that matches.
 
 ## Steps
 
@@ -54,7 +54,7 @@ Read the comments: decisions and later corrections live there and may supersede 
 
 ### 2. Design
 
-If the issue has no design section, or it says not ready, stop and hand over `/flow:design <N>`. Do not claim the issue or branch until the design is ready: an unready issue claimed on the board blocks anyone else from shaping it.
+A bug with a reproduction and an agreed expected result needs no design: its expected result is the design, and it has a single slice. Go to step 3. Otherwise, if the issue has no design section, or it says not ready, stop and hand over `/flow:design <N>`. Do not claim the issue or branch until the design is ready: an unready issue claimed on the board blocks anyone else from shaping it.
 
 ### 3. Branch and claim
 

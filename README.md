@@ -37,7 +37,7 @@ Non-trivial work goes **design -> spec -> plan -> implement -> review**.
 
 | Skill | Purpose | Writes |
 |-------|---------|--------|
-| `/flow:design <issue \| description>` | Judge whether the high-level design is ready to spec: problem, outcome, scope, approach, interface (including where the design system lives), constraints, unknowns, size. Closes the gaps with you, accepts design done elsewhere rather than redoing it, and splits large work by deliverable. When nobody can answer, it posts the gaps and stops. | design section on the issue, one comment per pass, sub-issues |
+| `/flow:design <issue \| description>` | Judge whether the high-level design is ready to spec: problem, outcome, scope, approach, interface (including where the design system lives), constraints, unknowns, size. Closes the gaps with you, accepts design done elsewhere rather than redoing it, and splits large work by deliverable. When nobody can answer, it posts the gaps and stops. | design section on the issue, one comment per pass, sub-issues, board status |
 | `/flow:spec <behaviour>` | Agree what should happen before anything is built. Plain Given/When/Then, one behaviour per file, stable scenario names. | `specs/<area>/<slug>.md` |
 | `/flow:plan <spec-id>` | Phased, test-first plan in plan mode. Phase 0 backfills regression tests where existing coverage is thin. | `plans/<slug>.md` |
 | `/flow:implement <slug>` | Executes the plan phase by phase. Red before green, gate and commit per phase, plan checkboxes kept current. Deletes the plan on completion. | commits |

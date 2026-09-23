@@ -2,6 +2,7 @@
 name: capture
 description: "Run the app, follow the journeys in an area guide, and save a screenshot at each step, so there is an up-to-date picture of how the product looks and behaves today to feed into design tools or a UX fix. Use when the user asks for screenshots of current behaviour, wants to redesign or fix a flow, or asks to capture journeys. Invoke manually: /flow:capture <area> [journey ...] [--to <dir>]"
 argument-hint: "<area> [journey ...] [--to <directory>]"
+disable-model-invocation: true
 ---
 
 # Capture journeys
@@ -30,4 +31,4 @@ When the same journeys get captured often, the project can take screenshots in i
 
 - Read-only against the app: follow journeys, never submit anything that changes real data outside the reference data or tenant the project names. If a journey ends in an irreversible action, capture up to the confirmation and stop.
 - Web apps only, unless the project `CLAUDE.md` names another capture tool. For a mobile or desktop app with none named, say so and stop.
-- Nothing this skill writes goes into the repository.
+- Nothing this skill writes goes into the repository, except, with the user's agreement, the `Capture` section of the project `CLAUDE.md`.
