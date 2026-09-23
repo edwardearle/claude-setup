@@ -14,7 +14,7 @@ Idempotent; safe to re-run after every git pull. It:
   github - register from the GitHub repo named in -GitHubRepo
 
 .PARAMETER SkipPlugin
-  Only do the CLAUDE.md and settings steps.
+  Skip the plugin step.
 #>
 [CmdletBinding()]
 param(
@@ -69,6 +69,10 @@ else {
 }
 
 # 2. Plugin
+# The claude CLI can write to stderr, which Windows PowerShell 5.1 turns into a
+# terminating error under 'Stop' when stderr is redirected. That must not stop the
+# settings merge that follows.
+$ErrorActionPreference = 'Continue'
 if (-not $SkipPlugin) {
     $claude = Get-Command claude -ErrorAction SilentlyContinue
     if (-not $claude) {
@@ -100,9 +104,11 @@ if (-not $SkipPlugin) {
     }
 }
 
+$ErrorActionPreference = 'Stop'
+
 # 3. Merge settings
 # Runs after the plugin step, and checks its result, because a merged key was once
-# lost while the plugin step ran. The cause is not confirmed.
+# lost while the plugin step ran.
 $srcPath = Join-Path $GlobalDir 'settings.json'
 $dstPath = Join-Path $ClaudeDir 'settings.json'
 $src = Read-Text $srcPath | ConvertFrom-Json
@@ -145,7 +151,7 @@ else {
     Write-Step "settings.json already up to date"
 }
 
-$check = Read-Text $dstPath | ConvertFrom-Json
+if (Test-Path $dstPath) { $check = Read-Text $dstPath | ConvertFrom-Json } else { $check = New-Object PSObject }
 $missing = @()
 foreach ($prop in $src.PSObject.Properties) {
     if ($prop.Name -eq 'permissions') { continue }
