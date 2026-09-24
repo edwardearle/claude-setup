@@ -94,4 +94,8 @@ bootstrap.ps1, bootstrap.sh
 - Keep `.ps1` files ASCII-only (Windows PowerShell 5.1 misreads UTF-8 without a BOM).
 - Bump `version` in both `plugin.json` and `marketplace.json` when the plugin changes.
 
+## Licence
+
+MIT. See [LICENSE](LICENSE).
+
 Initial scaffold generated with Claude Code (Fable 5.1), 15 September 2026.
