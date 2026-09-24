@@ -22,7 +22,7 @@ Collect and present in one table, then gate.
 - **Traceability in tests**: count of test files referencing spec IDs, and the reference shape used (`@covers`, `describe('SPEC-...`).
 - **Settings**: `.claude/settings*.json` allowlist size and any entries carrying another machine's absolute paths.
 
-Use `Explore` or a `haiku` agent for the counting. Keep only the table.
+Give the counting to the explorer role. Keep only the table.
 
 ## Phase 1: Instruction file
 
@@ -42,7 +42,7 @@ Rewrite `CLAUDE.md` in the template shape. If only the case differs, rename in t
 
 1. **Map.** Parse the monolith into one entry per spec heading. Derive `area` from the category prefix (`SPEC-AUTH` -> `auth`, `SPEC-SUB` -> `billing` or whatever the user prefers; ask once for the whole mapping). Derive `slug` from the title. Produce `specs/MIGRATION-MAP.md`: `old id | new id | status | note`. Resolve duplicate IDs by intent, not position. Gate on the map before writing any spec file.
 2. **Write.** One file per entry in the spec format. Old ID goes in `aliases`. Scenario names are kebab-cased from the scenario titles. Status: `implemented` only if the coverage document and a live grep both agree tests exist; otherwise `accepted`. Preserve wording; do not improve the specs during migration.
-3. **Rewrite test references** mechanically from the map: `describe('SPEC-AUTH-007: ...')` -> `describe('auth/sign-in', ...)`, `@covers SPEC-AUTH-007` -> `@covers auth/sign-in`. Give this to a Sonnet agent with the map and the file list. Run the full suite: only names should have changed, so anything failing is a mistake in the rewrite.
+3. **Rewrite test references** mechanically from the map: `describe('SPEC-AUTH-007: ...')` -> `describe('auth/sign-in', ...)`, `@covers SPEC-AUTH-007` -> `@covers auth/sign-in`. Give this to the executor role with the map and the file list. Run the full suite: only names should have changed, so anything failing is a mistake in the rewrite.
 4. **Check.** Spec count in equals files out. Every old ID appears in exactly one `aliases`. Run `/flow:spec-audit`; there should be no orphan references.
 5. Gate; commit `refactor(specs): one file per behaviour with legacy ids as aliases`. Delete the monolith in a **separate** commit: `chore(specs): remove superseded specification document`.
 6. **Guides.** Run `/flow:guide` for every area with implemented specs. The guides describe what the migrated specs say, not what the code might do beyond them. Gate; commit `docs(specs): add area guides`.
