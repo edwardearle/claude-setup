@@ -8,7 +8,7 @@ Rankings are 1-10, higher is better, with the exception of cost where lower is b
 | Sonnet 5 | 3 | 5 | 6 | `Agent` with `model: "sonnet"` |
 | Opus 5.5 | 5 | 9 | 8 | `Agent` with `model: "opus"`, or the main session |
 | Fable 5.1 | 9 | 10 | 9 | `Agent` with `model: "fable"` |
-| GPT-5.6 Sol via Codex | 6 | 7 | 5 | `codex exec` through Bash, **only when `codex` is on PATH** |
+| GPT-6 Sol via Codex | 6 | 7 | 5 | `codex exec` through Bash, **only when `codex` is on PATH** |
 | GPT-6 Astra via Codex | 10 | 9 | 7 (9 for SVG) | `codex exec` through Bash, **only when `codex` is on PATH** |
 
 ### Roles
@@ -24,7 +24,7 @@ Skills and agents name a role, never a model. This table is the only place a rol
 | **Prose writer** | Documentation: guides, docs fixes, a README, anything a person reads cold | Opus | Fable for a README or another document newcomers read cold, and whenever Opus's output misses the bar |
 | **Illustrator** | Drawing an SVG, static or animated | Astra via Codex | Fable, then Opus, saying first that Codex is unavailable |
 | **Checker** | Comparison jobs: is this document still true, which scenarios have tests | Sonnet at low or medium effort | None. It reports; it never rewrites |
-| **Reviewer** | Claude review of a diff against its specs | Small change, or meaningful change alongside the cross-family reviewer: Sonnet, or Opus if this session is Sonnet. Meaningful change without it: Opus if this session is Fable or Sonnet, Fable if it is Opus | None |
+| **Reviewer** | Claude review of a diff against its specs | Small change, or meaningful change alongside the cross-family reviewer: Sonnet, or Opus if this session is Sonnet. Meaningful change without it: Fable if this session is Opus, otherwise Opus | If the cross-family reviewer fails on a meaningful change, also launch the reviewer for a meaningful change without it, unless that is the model already reviewing, and keep both reports |
 | **Cross-family reviewer** | The primary review of a meaningful change, from a different lineage | GPT-6 Sol via Codex, pinned with `-m gpt-6-sol`, briefed and run by a thin Sonnet agent at low effort | Skipped when `codex` is not on PATH. Never used for a small change |
 
 The agents with a model in their frontmatter follow this table: `flow:docs-checker` and `flow:spec-checker` are checkers; `flow:reviewer` defaults to Opus but `/flow:review` always launches it with the reviewer role's model.
@@ -50,7 +50,7 @@ Anything else goes to Claude. If you find yourself briefing Codex because the wo
 - Cost should not be the primary motivator for choosing the right model. Take advantage of low cost models for low risk, low complexity work, or to gain information, or to experiment before moving on to more expensive models for higher impact work.
 - **Illustrator over UI builder.** An icon, an illustration, a diagram or a motion piece goes to the illustrator even though it is UI, whether it ships as a file or inline in markup. Brief it with the dimensions, the palette, the theming rules and whether motion is wanted. If the result misses the brief, re-brief it rather than patching it by hand; wiring it into the markup is not patching. Changing an SVG that already exists, whether a fill, a size, a `viewBox` or an `aria-` attribute, is an ordinary code change and goes where it otherwise would, as does code that emits SVG at runtime, such as a chart component.
 - **Imagery nobody asked for**: ask first, in any format, SVG included. Do not decide on the user's behalf that a deliverable wants a picture: propose it in one line and wait. Once it has been asked for, it follows the roles above. A raster image needs a tool that can generate one; if the session has none, say so rather than substituting something else.
-- **Reviews** come from a **different model** than the one that wrote the code. The author is this session's model, even when it handed phases to other agents; code written by Codex, such as an SVG, gets an Opus reviewer. A change is **small** when it has under 200 changed lines, not counting lockfiles (`*.lock`, `*-lock.json`, `*-lock.yaml`, `go.sum`) or files marked `linguist-generated` in `.gitattributes`, and its design names no risk flags. Anything else is **meaningful**. Disagreement between reviewers is signal.
+- **Reviews** come from a **different model** than the one that wrote the code. The author is this session's model, even when it handed phases to other agents. Files Codex wrote, such as an SVG, are reviewed by the Claude reviewer and left out of the cross-family reviewer's brief, so Codex never reviews its own output. A change is **small** when it has under 200 changed lines, not counting lockfiles (`*.lock`, `*-lock.json`, `*-lock.yaml`, `packages.lock.json`, `go.sum`), files marked `linguist-generated` in `.gitattributes`, or binary files, and its design names no risk flags. A branch with no issue, an issue with no design section, or a design with no `Flags:` line has none. Anything else is **meaningful**. Disagreement between reviewers is signal.
 - **Writing in your own model.** When the prose writer or UI builder role maps to the model this session is running, do the work here rather than launching an agent for it. Every other role is always delegated.
 
 ### Mechanics
@@ -58,7 +58,7 @@ Anything else goes to Claude. If you find yourself briefing Codex because the wo
 - Claude models: the `Agent` tool's `model` parameter. Independent agents go in one message so they run in parallel.
 - Codex: `codex exec "<self-contained prompt>"` via Bash from the working directory. For review or investigation use `codex exec -s read-only "<prompt>"`. Which model that reaches is whatever Codex is configured to default to; where the choice matters, pin it with `-m`, e.g. `-m gpt-6-astra`. Codex has none of this session's context, so the prompt must carry the spec, the constraints and the acceptance criteria.
 - Keep Codex output out of the main context: spawn the cross-family reviewer's thin wrapper agent, whose job is to write the self-contained prompt, run `codex exec`. Use `schema` on the prompt wrapper to get structured output.
-- Always label these agents with `gpt-5.6:` or `gpt-6:` prefix (as appropriate for the task) so that it is clear that the real agent is codex rather than the wrapper's claude model
+- Always label these agents with a `gpt-6:` prefix so that it is clear that the real agent is codex rather than the wrapper's claude model
 - Codex runs on plan credits until they are gone, then `codex exec --profile api` bills the card. One more reason not to spend it on work the executor would have done.
 - Confirm the result compiles and tests pass, and return a short summary.
 - If `codex` is not on PATH, skip the Codex routes silently and use the Claude alternative. Do not attempt to install it. The exception is the illustrator: say that Codex is unavailable before falling back, since the drop in quality is visible.
