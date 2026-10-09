@@ -67,4 +67,4 @@ Anything else goes to Claude. If you find yourself briefing Codex because the wo
 
 - Anything that reads across many files goes to a subagent; keep only the conclusion.
 - Never paste large tool output into the main conversation. Save it to the scratchpad and read the parts you need.
-- Parallel implementation happens in separate git worktrees, one agent each. Never two agents in one working tree.
+- Parallel implementation happens in separate git worktrees, one agent each. Git checks a branch out in one worktree at a time, so each part gets its own branch, cut from the work's branch and named `<branch>-<part>`, with a worktree of the same name in the main clone's `.claude/worktrees/`, created as the source-control rules set out. Merge each part back into the work's branch when it is done. Never two agents in one working tree.
