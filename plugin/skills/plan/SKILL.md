@@ -26,7 +26,7 @@ Read the spec(s) first. If any is not `accepted`, stop and say which; the user c
 # <Title>
 
 Specs: auth/sign-in, auth/lockout
-Branch: feat/sign-in-lockout
+Branch: 42-sign-in-lockout
 Created: 2026-09-15
 
 ## State

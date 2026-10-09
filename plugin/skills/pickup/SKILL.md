@@ -21,7 +21,7 @@ If the `github-projects-v2` skill is installed, use its scripts (`show-board.sh`
 
 ## Work out where the issue is
 
-Read the issue with its comments, `git fetch`, and look for the branch locally and on the remote. Then find the first row that matches and enter there. State the stage in one line so the user can correct you.
+Read the issue with its comments, `git fetch`, and look for the branch locally and on the remote: `<N>-*`, or a branch from before that naming, found through an open PR that references the issue or, for an issue already In Progress, by asking which unmerged branch holds the work. Never create a second branch for work that already has one. If the branch is checked out in a worktree (`git worktree list`), move the session into it with `EnterWorktree` before handing over, wherever that worktree is. If it has none, give it one as the source-control rules set out. Then find the first row that matches and enter there. State the stage in one line so the user can correct you.
 
 | Evidence | Stage | Next |
 |---|---|---|
@@ -33,7 +33,7 @@ Read the issue with its comments, `git fetch`, and look for the branch locally a
 | A plan naming them exists on the branch | Implementing | `/flow:implement <slug>` |
 | That plan has been deleted on the branch (its last phase ran) and no PR is open | Ready for PR | Step 5 |
 | PR open | In review | Report the PR state; nothing to do here |
-| PR merged; slices remain | Next slice | Step 3 for the next slice, from the default branch |
+| PR merged; slices remain | Next slice | Clean up the merged slice (step 6), then step 3 for the next slice |
 | PR merged; no slices remain | Done | Step 6 |
 
 The **current slice** is the first slice in the design section with a spec not yet `implemented`; for a bug with no design section, it is the bug itself. Rows are evaluated for that slice only. An issue already In Progress on the board with no branch anywhere was claimed elsewhere or its branch was deleted after a slice merged: say which and continue with the row that matches.
@@ -58,15 +58,9 @@ A bug with a reproduction and an agreed expected result needs no design: its exp
 
 ### 3. Branch and claim
 
-Branch fresh from the latest default branch. If the working tree is dirty, stop and ask; never stash or discard on the user's behalf.
+Create the branch and its worktree in the main clone, as the source-control rules set out, then move the session into it with `EnterWorktree` and that path. `<default branch>` comes from `gh repo view --json defaultBranchRef -q .defaultBranchRef.name`.
 
-```
-git fetch origin
-DEFAULT=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)
-git checkout -b <type>/<slug> origin/$DEFAULT
-```
-
-`<slug>` names the behaviour, per the source-control rules. For a sliced issue, one branch per slice. Then move the issue to In Progress if it is not already.
+`<name>` is `<N>-<short-title>`. For a sliced issue, one branch per slice, with the slice in the short title. A sub-issue that builds on a sibling's open PR branches from that PR's branch instead of the default branch; say so. Then move the issue to In Progress if it is not already.
 
 Then hand over: one `/flow:spec` line per spec in the current slice, in dependency order, each naming the issue and the part of the design section it covers.
 
@@ -76,7 +70,7 @@ These stages are the user's to start. When re-entered at one of them, do the sta
 
 ### 5. Open the PR
 
-Only when the user asks. Push the branch and open the PR against the default branch. The body names the specs delivered, carries the `Docs:` line from the plan's review phase, and closes the issue only if this is the last slice:
+Only when the user asks. Push the branch with `git push -u origin <name>` and open the PR against the default branch, or with `--base <branch>` against a sibling's branch this one was built on. Work that out rather than remembering it: for each open PR on a sibling sub-issue, `git merge-base --is-ancestor origin/<its branch> HEAD` succeeding means this branch contains it. The body names the specs delivered, carries the `Docs:` line from the plan's review phase, and closes the issue only if this is the last slice:
 
 ```
 gh pr create --title "<conventional title>" --body "<Closes | Part of> #<N>
@@ -87,6 +81,8 @@ Docs: <outcome of the documentation review>"
 
 Surface the PR URL. The issue stays In Progress: review may reject it.
 
-### 6. Done
+### 6. Clean up and close
+
+After each PR merges, remove its worktree and branch from the main clone, as the source-control rules set out. If the session is inside that worktree, leave it first (`ExitWorktree` with `keep`). If git refuses either removal, report why and ask; never force.
 
 After the last PR merges, and only then, move the issue to Done. A parent outcome is Done when its last sub-issue is; say so rather than moving it when one child finishes.

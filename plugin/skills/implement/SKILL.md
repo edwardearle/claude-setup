@@ -13,7 +13,7 @@ Plan: $ARGUMENTS
 
 1. Read the plan and every spec it names. Read the project `CLAUDE.md` for the test and lint commands.
 2. Work out where you are from the checkboxes and the `## State` block, and from `git log` and `git status` if the plan is stale. **State the entry phase in one line before doing anything else** so the user can correct you.
-3. Confirm you are on the plan's branch. If not, ask before switching or creating it.
+3. Confirm you are on the plan's branch. If it is checked out in another worktree (`git worktree list`), move into that one with `EnterWorktree`. If it has no worktree, or does not exist, ask before creating what is missing as the source-control rules set out.
 
 ## Each phase
 

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Migrate a project to the flow workflow
 
-Five phases, each gated with `AskUserQuestion` and committed separately on a branch `chore/flow-migration`. Nothing is deleted until its replacement exists and has been checked. Announce the entry phase first: a partly migrated project resumes where it stopped.
+Five phases, each gated with `AskUserQuestion` and committed separately on one branch and worktree, named for the migration's issue (`<N>-flow-migration`) as the source-control rules set out. A migration already in flight keeps its branch, such as `chore/flow-migration`. Nothing is deleted until its replacement exists and has been checked. Announce the entry phase first: a partly migrated project resumes where it stopped.
 
 Read the `flow:spec` skill's `SPEC-FORMAT.md` and the `templates/project/CLAUDE.md` shape from the setup repository before starting (the plugin root is `${CLAUDE_PLUGIN_ROOT}`; the templates sit beside it at `../templates/`).
 
@@ -62,7 +62,7 @@ Strip allowlist entries that carry another machine's paths or one-off encoded co
 
 ## Finish
 
-Report: line counts before and after for the instruction file; spec files written; test files rewritten and the suite result; documents deleted; anything left unmigrated and why. Suggest the user open a PR from `chore/flow-migration`.
+Report: line counts before and after for the instruction file; spec files written; test files rewritten and the suite result; documents deleted; anything left unmigrated and why. Suggest the user open a PR from the migration branch.
 
 ## Rules
 
