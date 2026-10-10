@@ -8,7 +8,7 @@ Rankings are 1-10, higher is better, with the exception of cost where lower is b
 | Sonnet 5 | 3 | 5 | 6 | `Agent` with `model: "sonnet"` |
 | Opus 5.5 | 5 | 9 | 8 | `Agent` with `model: "opus"`, or the main session |
 | Fable 5.1 | 9 | 10 | 9 | `Agent` with `model: "fable"` |
-| GPT-6 Sol via Codex | 6 | 7 | 5 | `codex exec` through Bash, **only when `codex` is on PATH** |
+| GPT-6.1 Sol via Codex | 6 | 7 | 5 | `codex exec` through Bash, **only when `codex` is on PATH** |
 | GPT-6 Astra via Codex | 10 | 9 | 7 (9 for SVG) | `codex exec` through Bash, **only when `codex` is on PATH** |
 
 ### Roles
@@ -25,7 +25,7 @@ Skills and agents name a role, never a model. This table is the only place a rol
 | **Illustrator** | Drawing an SVG, static or animated | Astra via Codex | Fable, then Opus, saying first that Codex is unavailable |
 | **Checker** | Comparison jobs: is this document still true, which scenarios have tests | Sonnet at low or medium effort | None. It reports; it never rewrites |
 | **Reviewer** | Claude review of a diff against its specs | Small change, or meaningful change alongside the cross-family reviewer: Sonnet, or Opus if this session is Sonnet. Meaningful change without it: Fable if this session is Opus, otherwise Opus | If the cross-family reviewer fails on a meaningful change, also launch the reviewer for a meaningful change without it, unless that is the model already reviewing, and keep both reports |
-| **Cross-family reviewer** | The primary review of a meaningful change, from a different lineage | GPT-6 Sol via Codex, pinned with `-m gpt-6-sol`, briefed and run by a thin Sonnet agent at low effort | Skipped when `codex` is not on PATH. Never used for a small change |
+| **Cross-family reviewer** | The primary review of a meaningful change, from a different lineage | GPT-6.1 Sol via Codex, pinned with `-m gpt-6.1-sol`, briefed and run by a thin Sonnet agent at low effort | Skipped when `codex` is not on PATH. Never used for a small change |
 
 The agents with a model in their frontmatter follow this table: `flow:docs-checker` and `flow:spec-checker` are checkers; `flow:reviewer` defaults to Opus but `/flow:review` always launches it with the reviewer role's model.
 
