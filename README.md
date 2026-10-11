@@ -81,7 +81,7 @@ plugin/                           the flow plugin
 global/
   CLAUDE.md                       imported by ~/.claude/CLAUDE.md
   rules/*.md                      imported by global/CLAUDE.md, always loaded
-  platform/{windows,macos}.md     one selected per machine by bootstrap
+  platform/{windows,macos,linux}.md  one selected per machine by bootstrap
   settings.json                   permission baseline and default model, merged by bootstrap
 templates/project/                starting CLAUDE.md and specs/README.md for a new project
 tests/guard-git.sh                runs sample commands through the guard hook: bash tests/guard-git.sh

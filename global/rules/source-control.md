@@ -21,7 +21,7 @@
 - Branch from the latest default branch. Branch from somewhere else only for a reason you state, such as a sub-issue that builds on a sibling's open PR: it branches from that PR's branch and opens its own PR against it.
 
   ```
-  COMMON=$(git rev-parse --path-format=absolute --git-common-dir)
+  COMMON=$(cd "$(git rev-parse --git-common-dir)" && pwd)
   ROOT=$(dirname "$COMMON")
   grep -qxF '.claude/worktrees/' "$COMMON/info/exclude" || echo '.claude/worktrees/' >> "$COMMON/info/exclude"
   git fetch origin
